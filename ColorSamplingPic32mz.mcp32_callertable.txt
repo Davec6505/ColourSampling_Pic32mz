@@ -1,0 +1,17 @@
+main
+	__FillZeros
+	PerphialSetUp
+		set_performance_mode
+		Unlock_IOLOCK
+		PPS_Mapping_NoLock
+			_PPS_MAPPING
+				Unlock_IOLOCK
+				Lock_IOLOCK
+		Lock_IOLOCK
+		InitTimer1
+		InitTimer2
+Timer2Interrupt
+uart2_Rx_interrupt
+	UART2_Read
+	UART2_Write
+Timer1Interrupt
