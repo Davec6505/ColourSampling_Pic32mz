@@ -1,4 +1,4 @@
-#line 1 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+#line 1 "C:/Users/Git/ColourSampling_Pic32mz/ISR.c"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
 
@@ -107,98 +107,70 @@ extern char uart_rd;
  void set_USB_Interrupt();
  void set_performance_mode();
  void OutPuts(long long output);
-#line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-const char newline[] = {'\r','\n','\0'};
-Timers *T0;
-
-uint16_t tmr;
-uint16_t tmr_;
-static uint16_t pg_cnt;
-
-char cnt;
-char kk;
-char readbuff[64];
-char writebuff[64];
-
-char uart_rd;
-char txtA[20];
-char *txtPtr;
-#line 23 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-void main() {
-long long pgtime = 0;
-long long Lastmillis = 0;
- PerphialSetUp();
- EI();
- pg_cnt = 0;
- while(1){
- USB_Polling_Proc();
-
- T0 = GetTimer_Values();
+#line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
+#line 4 "C:/Users/Git/ColourSampling_Pic32mz/ISR.c"
+static Timers T0;
 
 
 
+void (*TMR_Sys)();
+void (*TMR_Tmr)();
+
+void ISR_Init(){
+ TMR_Sys = &TMR_System;
+ TMR_Tmr = &TMR_Timer;
+}
+#line 19 "C:/Users/Git/ColourSampling_Pic32mz/ISR.c"
+ void USBPoll() iv IVT_USB ilevel 5 ics ICS_SRS {
+ USB_Interrupt_Proc();
+}
+#line 27 "C:/Users/Git/ColourSampling_Pic32mz/ISR.c"
+static void Timer1Interrupt() iv IVT_TIMER_1 ilevel 7 ics ICS_AUTO {
+ T1IF_bit = 0;
 
 
- switch(pg_cnt){
- case 0:
- pgtime = T0->millis - T0->last_millis;
- kk = HID_Read();
- if (kk != 0)
- {
- for(cnt = 0; cnt < 64; cnt++)
- writebuff[cnt] = readbuff[cnt];
- HID_Write(writebuff, 64);
+}
+static void TMR_System(){
+
+}
+#line 41 "C:/Users/Git/ColourSampling_Pic32mz/ISR.c"
+static void Timer2Interrupt() iv IVT_TIMER_2 ilevel 5 ics ICS_AUTO {
+ T2IF_bit = 0;
+
+ TMR_Tmr();
+}
+
+static void TMR_Timer(){
+ T0.millis++;
+ T0.ms++;
+ if(T0.ms > 999){
+ T0.ms = 0;
+ T0.sec++;
+ LATB9_bit = !LATB9_bit;
+ if(T0.sec > 59){
+ T0.sec = 0;
+ T0.min++;
+ if(T0.sec > 59){
+ T0.min = 0;
+ T0.hr++;
+ if(T0.hr > 23){
+ T0.hr = 0;
  }
- if(pgtime > 10){
-
- pg_cnt = 1;
- T0->last_millis = T0->millis;
- LATB10_bit = 1;
  }
- break;
- case 1:
- pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 100){
-
- pg_cnt = 2;
- T0->last_millis = T0->millis;
- LATB10_bit = 0;
  }
- break;
- case 2:
- pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 250){
-
- pg_cnt = 3;
- T0->last_millis = T0->millis;
- LATB10_bit = 1;
- }
- break;
- case 3:
- pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 50){
-
- pg_cnt = 0;
- T0->last_millis = T0->millis;
- LATB10_bit = 0;
- }
- break;
- default:
- pg_cnt = 0;
- Lastmillis = T0->millis;
- break;
- }
-
  }
 }
 
-void PrintHandler(char c){
- UART1_Write(c);
+
+Timers* GetTimer_Values(){
+ return &T0;
 }
 
-void OutPuts(long long output){
- sprintf(txtA,"%d",output);
- txtPtr = strncat(txtA,newline,strlen(newline));
- memcpy(writebuff,txtPtr,strlen(txtPtr));
- HID_Write(writebuff, 64);
+
+void uart2_Rx_interrupt() iv IVT_UART2_RX ilevel 7 ics ICS_AUTO {
+
+ uart_rd = UART2_Read();
+ UART2_Write( uart_rd );
+
+ U2RXIF_bit = 0;
 }

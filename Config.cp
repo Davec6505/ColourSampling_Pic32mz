@@ -1,5 +1,41 @@
 #line 1 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
+
+
+
+
+
+
+
+
+
+extern char readbuff[64];
+extern char writebuff[64];
+
+
+
+
+
+typedef struct {
+unsigned long long millis;
+unsigned long long last_millis;
+unsigned int ms;
+char sec;
+char min;
+char hr;
+}Timers;
+
+
+
+
+
+
+
+void ISR_Init();
+static void TMR_System();
+static void TMR_Timer();
+Timers* GetTimer_Values();
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 
 
@@ -57,12 +93,20 @@ typedef unsigned long size_t;
 typedef unsigned long wchar_t;
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/built_in.h"
 #line 12 "c:/users/git/coloursampling_pic32mz/config.h"
+extern uint16_t tmr;
+extern uint16_t tmr_;
+extern char uart_rd;
+
+
+
  void PerphialSetUp();
+ void HID_Setp();
  void InitTimer1();
  void InitTimer2();
  void Uart2InterruptSetup();
  void set_USB_Interrupt();
  void set_performance_mode();
+ void OutPuts(long long output);
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
 void PerphialSetUp(){
 
@@ -70,6 +114,8 @@ void PerphialSetUp(){
  TRISB10_bit = 0;
  TRISB9_bit = 0;
  set_performance_mode();
+
+ HID_Enable(&readbuff,&writebuff);
  Unlock_IOLOCK();
  PPS_Mapping_NoLock(_RPB2, _OUTPUT, _U2TX);
  PPS_Mapping_NoLock(_RPB0, _INPUT, _U2RX);
@@ -77,8 +123,24 @@ void PerphialSetUp(){
 
  InitTimer1();
  InitTimer2();
+ ISR_Init();
+ UART1_Init(115200);
 
 }
+
+void HID_Setp(){
+
+ IEC4SET |= 3ul << 4;
+
+ IPC33SET |= 5ul << 2;
+ IPC33CLR |= 3;
+
+
+
+
+
+}
+
 
 void InitTimer1(){
  T1CON = 0x8000;
@@ -87,7 +149,7 @@ void InitTimer1(){
  T1IP2_bit = 1;
  T1IF_bit = 0;
  T1IE_bit = 1;
- PR1 = 50000;
+ PR1 = 10000;
  TMR1 = 0;
 }
 
@@ -105,8 +167,8 @@ void InitTimer2(){
 
 void Uart2InterruptSetup(){
 
+ UART2_Init_Advanced(115200, 10000, _UART_LOW_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
 
- UART2_Init(13000);
  UART_Set_Active(&UART2_Read, &UART2_Write, &UART2_Data_Ready, &UART2_Tx_Idle);
 
  Delay_ms(100);
@@ -114,33 +176,16 @@ void Uart2InterruptSetup(){
  URXISEL0_bit = 0;
  URXISEL1_bit = 1;
  IEC4.B18 = 1;
-
  U2RXIP0_bit = 1;
  U2RXIP1_bit = 1;
  U2RXIP2_bit = 1;
-
  URXISEL1_U2STA_bit = 0;
  U2RXIF_bit = 0;
-
-
-}
-
-void set_USB_Interrupt(){
-
- IEC4SET |= 3ul << 4;
- IFS4CLR |= 3ul << 4;
-
- IPC33SET |= 5ul << 2;
- IPC33CLR |= 3;
-
- IPC33SET |= 5ul << 10;
- IPC33CLR |= 3ul << 8;
 }
 
 
 void set_performance_mode()
 {
-
 
  DI();
  SYSKEY = 0xAA996655;
@@ -158,7 +203,7 @@ void set_performance_mode()
 
 
  PB3DIVbits.ON = 1;
- PB3DIVbits.PBDIV = 1;
+ PB3DIVbits.PBDIV = 4;
 
 
  PB4DIVbits.ON = 1;
@@ -181,7 +226,7 @@ void set_performance_mode()
  PRECONbits.PFMSECEN = 0;
  PRECONbits.PREFEN = 0b11;
  PRECONbits.PFMWS = 0b010;
-#line 130 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
+#line 132 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
  SYSKEY = 0x33333333;
 
 }

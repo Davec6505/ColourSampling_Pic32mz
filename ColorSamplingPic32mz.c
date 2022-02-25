@@ -1,64 +1,105 @@
 #include "Config.h"
 
 
+const char newline[] = {'\r','\n','\0'};
+Timers *T0;
+
 uint16_t tmr;
 uint16_t tmr_;
+static uint16_t pg_cnt;
+
 char cnt;
 char kk;
 char readbuff[64];
 char writebuff[64];
+
 char uart_rd;
+char txtA[20];
+char *txtPtr;
 
+/***************************************************************************
+*main
+**************************************************************************/
 void main() {
-
-
+long long pgtime = 0;
+long long Lastmillis = 0;
    PerphialSetUp();
    EI();
-
+   pg_cnt = 0;
    while(1){
+      USB_Polling_Proc();               // Call this routine periodically
+     //Timers to transition states
+     T0 = GetTimer_Values();
+
+     //Pol as often a possible
+
+
+     
+     switch(pg_cnt){
+       case 0:   //10ms time critical
+            pgtime = T0->millis - T0->last_millis;
+            kk = HID_Read();
+            if (kk != 0)
+            {
+               for(cnt = 0; cnt < 64; cnt++)
+                    writebuff[cnt] = readbuff[cnt];
+               HID_Write(writebuff, 64);
+            }
+            if(pgtime > 10){
+              // OutPuts(pgtime);
+               pg_cnt = 1;
+               T0->last_millis = T0->millis;
+               LATB10_bit = 1;
+            }
+            break;
+       case 1:  //100ms
+            pgtime = T0->millis - T0->last_millis ;
+            if(pgtime > 100){
+              // OutPuts(pgtime);
+               pg_cnt = 2;
+               T0->last_millis = T0->millis;
+                LATB10_bit = 0;
+            }
+            break;
+       case 2:  //250ms
+            pgtime =  T0->millis - T0->last_millis ;
+            if(pgtime > 250){
+             //  OutPuts(pgtime);
+               pg_cnt = 3;
+               T0->last_millis = T0->millis;
+               LATB10_bit = 1;
+            }
+            break;
+       case 3:  //50ms
+            pgtime =   T0->millis - T0->last_millis ;
+            if(pgtime > 50){
+             //  OutPuts(pgtime);
+               pg_cnt = 0;
+               T0->last_millis = T0->millis;
+                LATB10_bit = 0;
+            }
+            break;
+        default:
+           pg_cnt = 0;
+           Lastmillis = T0->millis;
+           break;
+     }
 
    }
 }
 
-void Timer1Interrupt() iv IVT_TIMER_1 ilevel 7 ics ICS_AUTO {
-  T1IF_bit         = 0;
-  //Enter your code here
-  tmr++;
-  if(tmr>99)
-  {
-    tmr = 0;
-    LATB10_bit = !LATB10_bit;
-  }
-
+void PrintHandler(char c){
+  UART1_Write(c);
 }
 
-void Timer2Interrupt() iv IVT_TIMER_2 ilevel 5 ics ICS_AUTO {
-  T2IF_bit         = 0;
-  //Enter your code here
-   tmr_++;
-   if(tmr_ > 449){
-     tmr_ = 0;
-     LATB9_bit = !LATB9_bit;
-   }
-     // USB_Polling_Proc();
+void OutPuts(long long output){
+    sprintf(txtA,"%d",output);
+    txtPtr = strncat(txtA,newline,strlen(newline));
+    memcpy(writebuff,txtPtr,strlen(txtPtr));
+    HID_Write(writebuff, 64);
 }
 
-void uart2_Rx_interrupt() iv IVT_UART2_RX ilevel 7 ics ICS_AUTO {
 
-     uart_rd = UART2_Read();
-     UART2_Write( uart_rd );
-     //IFS4.B18 = 0;
-     U2RXIF_bit = 0;            // Ensure interrupt is not pending
-}
 
-/*void USBInterrupt() iv IVT_USB ilevel 5 ics ICS_AUTO {
-    USB_Interrupt_Proc();
-}
-
-void USBDMAInterrupt() iv IVT_USB_DMA ilevel 5 ics ICS_SRS
-{
-    //USB_Dma_Interrupt_Proc();
-}*/
-
-          //UART2_Write_Text("Start");
-       // UART2_Write(13);
+ //UART2_Write_Text("Start");
+ // UART2_Write(13);

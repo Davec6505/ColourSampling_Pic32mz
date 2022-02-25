@@ -7,15 +7,33 @@ void PerphialSetUp(){
     TRISB10_bit = 0;
     TRISB9_bit  = 0;
     set_performance_mode();
+  //  HID_Setp();
+    HID_Enable(&readbuff,&writebuff);
     Unlock_IOLOCK();
     PPS_Mapping_NoLock(_RPB2, _OUTPUT, _U2TX);   // Sets pin PORTC.B2 to be Output and maps UART1 Transmit to it
     PPS_Mapping_NoLock(_RPB0, _INPUT, _U2RX);    // Sets pin PORTC.B0 to be Input and maps UART1 Receive to it
     Lock_IOLOCK();
   //Ensure that B2CLK is used UEN<1:0>
-   InitTimer1();
-   InitTimer2();
-     // Uart2InterruptSetup();
+    InitTimer1();
+    InitTimer2();
+    ISR_Init();
+    UART1_Init(115200);
+  //Uart2InterruptSetup();
 }
+
+void HID_Setp(){
+// enable usb general and dma interrupts
+   IEC4SET |= 3ul << 4;
+// set priority 7; subpriority 0 for usb general interrupt
+   IPC33SET |= 5ul << 2;
+   IPC33CLR |= 3;
+// set priority 7; subpriority 0 for usb dma interrupt
+   // IPC33SET |= 5ul << 10;
+   // IPC33CLR |= 2ul << 8;
+
+
+}
+
 //Place/Copy this part in declaration section
 void InitTimer1(){
   T1CON                 = 0x8000;
@@ -24,60 +42,43 @@ void InitTimer1(){
   T1IP2_bit             = 1;
   T1IF_bit              = 0;
   T1IE_bit              = 1;
-  PR1                   = 50000;
+  PR1                   = 10000;
   TMR1                  = 0;
 }
 
 void InitTimer2(){
-  T2CON                  = 0x8000;
-  T2IP0_bit          = 1;
-  T2IP1_bit          = 0;
-  T2IP2_bit          = 1;
+  T2CON             = 0x8000;
+  T2IP0_bit         = 1;
+  T2IP1_bit         = 0;
+  T2IP2_bit         = 1;
   T2IF_bit          = 0;
   T2IE_bit          = 1;
-  PR2                  = 10000;
-  TMR2                  = 0;
+  PR2               = 10000;
+  TMR2              = 0;
 }
 
 
 void Uart2InterruptSetup(){
 
-//  UART2_Init_Advanced(115200, 10000, _UART_Low_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
-  UART2_Init(13000);              // Initialize UART module at 9600 bps
-  UART_Set_Active(&UART2_Read, &UART2_Write, &UART2_Data_Ready, &UART2_Tx_Idle); // set UART2 active
+    UART2_Init_Advanced(115200, 10000, _UART_LOW_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
+    //UART2_Init(13000);       // Initialize UART module at 9600 bps
+    UART_Set_Active(&UART2_Read, &UART2_Write, &UART2_Data_Ready, &UART2_Tx_Idle); // set UART2 active
 
-  Delay_ms(100);                  // Wait for UART module to stabilize
+    Delay_ms(100);             // Wait for UART module to stabilize
     //LPBACK_bit = 1;
-    URXISEL0_bit = 0;
-    URXISEL1_bit = 1;
-    IEC4.B18 = 1;              // Enable UART2 RX interrupt
-
-    U2RXIP0_bit = 1;           //
-    U2RXIP1_bit = 1;           //
-    U2RXIP2_bit = 1;           // Set priority
-
+    URXISEL0_bit       = 0;
+    URXISEL1_bit       = 1;
+    IEC4.B18           = 1;    // Enable UART2 RX interrupt
+    U2RXIP0_bit        = 1;
+    U2RXIP1_bit        = 1;
+    U2RXIP2_bit        = 1;    // Set priority
     URXISEL1_U2STA_bit = 0;
     U2RXIF_bit = 0;            // Ensure interrupt is not pending
-
-
-}
-
-void set_USB_Interrupt(){
-// enable usb general and dma interrupts
-    IEC4SET |= 3ul << 4;
-    IFS4CLR |= 3ul << 4;
-    // set priority 5; subpriority 0 for usb general interrupt
-    IPC33SET |= 5ul << 2;
-    IPC33CLR |= 3;
-    // set priority 5; subpriority 0 for usb dma interrupt
-    IPC33SET |= 5ul << 10;
-    IPC33CLR |= 3ul << 8;
 }
 
 
 void set_performance_mode()
 {
-
     // Unlock Sequence
     DI(); // Disable all interrupts
     SYSKEY = 0xAA996655;
@@ -95,7 +96,7 @@ void set_performance_mode()
 
     // PB3DIV
     PB3DIVbits.ON = 1; // Peripheral Bus 2 Output Clock Enable (Output clock is enabled)
-    PB3DIVbits.PBDIV = 1; // Peripheral Bus 3 Clock Divisor Control (PBCLK3 is SYSCLK divided by 2)
+    PB3DIVbits.PBDIV = 4; // Peripheral Bus 3 Clock Divisor Control (PBCLK3 is SYSCLK divided by 2)
 
     // PB4DIV
     PB4DIVbits.ON = 1; // Peripheral Bus 4 Output Clock Enable (Output clock is enabled)
@@ -126,6 +127,7 @@ void set_performance_mode()
     cp0 |= 0b011; // K0 = Cacheable, non-coherent, write-back, write allocate
     _mtc0(16, 0, cp0);
    */
+   
     // Lock Sequence
     SYSKEY = 0x33333333;
 

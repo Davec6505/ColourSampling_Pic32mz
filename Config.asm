@@ -13,6 +13,12 @@ ORI	R2, R2, BitMask(TRISB9_bit+0)
 _SX	
 JAL	_set_performance_mode+0
 NOP	
+LUI	R26, hi_addr(_writebuff+0)
+ORI	R26, R26, lo_addr(_writebuff+0)
+LUI	R25, hi_addr(_readbuff+0)
+ORI	R25, R25, lo_addr(_readbuff+0)
+JAL	_HID_Enable+0
+NOP	
 JAL	_Unlock_IOLOCK+0
 NOP	
 ORI	R27, R0, 2
@@ -31,6 +37,12 @@ JAL	_InitTimer1+0
 NOP	
 JAL	_InitTimer2+0
 NOP	
+JAL	_ISR_Init+0
+NOP	
+LUI	R25, 1
+ORI	R25, R25, 49664
+JAL	_UART1_Init+0
+NOP	
 L_end_PerphialSetUp:
 LW	R27, 12(SP)
 LW	R26, 8(SP)
@@ -40,6 +52,20 @@ ADDIU	SP, SP, 16
 JR	RA
 NOP	
 ; end of _PerphialSetUp
+_HID_Setp:
+LW	R2, Offset(IEC4SET+0)(GP)
+ORI	R2, R2, 48
+SW	R2, Offset(IEC4SET+0)(GP)
+LW	R2, Offset(IPC33SET+0)(GP)
+ORI	R2, R2, 20
+SW	R2, Offset(IPC33SET+0)(GP)
+LW	R2, Offset(IPC33CLR+0)(GP)
+ORI	R2, R2, 3
+SW	R2, Offset(IPC33CLR+0)(GP)
+L_end_HID_Setp:
+JR	RA
+NOP	
+; end of _HID_Setp
 _InitTimer1:
 ORI	R2, R0, 32768
 SW	R2, Offset(T1CON+0)(GP)
@@ -58,7 +84,7 @@ _SX
 LUI	R2, BitMask(T1IE_bit+0)
 ORI	R2, R2, BitMask(T1IE_bit+0)
 _SX	
-ORI	R2, R0, 50000
+ORI	R2, R0, 10000
 SW	R2, Offset(PR1+0)(GP)
 SW	R0, Offset(TMR1+0)(GP)
 L_end_InitTimer1:
@@ -97,9 +123,16 @@ SW	R25, 4(SP)
 SW	R26, 8(SP)
 SW	R27, 12(SP)
 SW	R28, 16(SP)
-ORI	R25, R0, 13000
-JAL	_UART2_Init+0
+MOVZ	R28, R0, R0
+ORI	R27, R0, 1
+ORI	R26, R0, 10000
+LUI	R25, 1
+ORI	R25, R25, 49664
+ADDIU	SP, SP, -4
+SB	R0, 0(SP)
+JAL	_UART2_Init_Advanced+0
 NOP	
+ADDIU	SP, SP, 4
 LUI	R28, hi_addr(_UART2_Tx_Idle+0)
 ORI	R28, R28, lo_addr(_UART2_Tx_Idle+0)
 LUI	R27, hi_addr(_UART2_Data_Ready+0)
@@ -149,29 +182,6 @@ ADDIU	SP, SP, 20
 JR	RA
 NOP	
 ; end of _Uart2InterruptSetup
-_set_USB_Interrupt:
-LW	R2, Offset(IEC4SET+0)(GP)
-ORI	R2, R2, 48
-SW	R2, Offset(IEC4SET+0)(GP)
-LW	R2, Offset(IFS4CLR+0)(GP)
-ORI	R2, R2, 48
-SW	R2, Offset(IFS4CLR+0)(GP)
-LW	R2, Offset(IPC33SET+0)(GP)
-ORI	R2, R2, 20
-SW	R2, Offset(IPC33SET+0)(GP)
-LW	R2, Offset(IPC33CLR+0)(GP)
-ORI	R2, R2, 3
-SW	R2, Offset(IPC33CLR+0)(GP)
-LW	R2, Offset(IPC33SET+0)(GP)
-ORI	R2, R2, 5120
-SW	R2, Offset(IPC33SET+0)(GP)
-LW	R2, Offset(IPC33CLR+0)(GP)
-ORI	R2, R2, 768
-SW	R2, Offset(IPC33CLR+0)(GP)
-L_end_set_USB_Interrupt:
-JR	RA
-NOP	
-; end of _set_USB_Interrupt
 _set_performance_mode:
 DI	R30
 LUI	R2, 43673
@@ -199,7 +209,7 @@ INS	R2, R3, 0, 7
 SB	R2, Offset(PB2DIVbits+0)(GP)
 SWR	R4, Offset(PB3DIVbits+8)(GP)
 SWL	R4, Offset(PB3DIVbits+11)(GP)
-ORI	R3, R0, 1
+ORI	R3, R0, 4
 LBU	R2, Offset(PB3DIVbits+0)(GP)
 INS	R2, R3, 0, 7
 SB	R2, Offset(PB3DIVbits+0)(GP)
