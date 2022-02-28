@@ -95,7 +95,7 @@ XORI	R2, R4, 0
 SLTIU	R2, R2, 1
 BEQ	R2, R0, L__main22
 NOP	
-SLTIU	R2, R3, 11
+SLTIU	R2, R3, 2
 L__main22:
 BEQ	R2, R0, L__main23
 NOP	
@@ -137,7 +137,7 @@ XORI	R2, R5, 0
 SLTIU	R2, R2, 1
 BEQ	R2, R0, L__main24
 NOP	
-SLTIU	R2, R4, 101
+SLTIU	R2, R4, 51
 L__main24:
 BEQ	R2, R0, L__main25
 NOP	
@@ -178,7 +178,7 @@ XORI	R2, R5, 0
 SLTIU	R2, R2, 1
 BEQ	R2, R0, L__main26
 NOP	
-SLTIU	R2, R4, 251
+SLTIU	R2, R4, 151
 L__main26:
 BEQ	R2, R0, L__main27
 NOP	
@@ -219,7 +219,7 @@ XORI	R2, R5, 0
 SLTIU	R2, R2, 1
 BEQ	R2, R0, L__main28
 NOP	
-SLTIU	R2, R4, 51
+SLTIU	R2, R4, 2
 L__main28:
 BEQ	R2, R0, L__main29
 NOP	
@@ -242,6 +242,13 @@ J	L_main3
 NOP	
 L_main16:
 SH	R0, Offset(ColorSamplingPic32mz_pg_cnt+0)(GP)
+LW	R2, Offset(_T0+0)(GP)
+ADDIU	R4, R2, 8
+LW	R2, Offset(_T0+0)(GP)
+LW	R3, 4(R2)
+LW	R2, 0(R2)
+SW	R2, 0(R4)
+SW	R3, 4(R4)
 J	L_main3
 NOP	
 L_main2:
@@ -286,7 +293,7 @@ _PrintHandler:
 ADDIU	SP, SP, -4
 SW	RA, 0(SP)
 ANDI	R25, R25, 255
-JAL	_UART1_Write+0
+JAL	_UART3_Write+0
 NOP	
 L_end_PrintHandler:
 LW	RA, 0(SP)

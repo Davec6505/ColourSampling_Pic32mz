@@ -1,41 +1,5 @@
 #line 1 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
-#line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
-
-
-
-
-
-
-
-
-
-extern char readbuff[64];
-extern char writebuff[64];
-
-
-
-
-
-typedef struct {
-unsigned long long millis;
-unsigned long long last_millis;
-unsigned int ms;
-char sec;
-char min;
-char hr;
-}Timers;
-
-
-
-
-
-
-
-void ISR_Init();
-static void TMR_System();
-static void TMR_Timer();
-Timers* GetTimer_Values();
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 
 
@@ -92,11 +56,55 @@ typedef long ptrdiff_t;
 typedef unsigned long size_t;
 typedef unsigned long wchar_t;
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/built_in.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
+#line 12 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
+extern char readbuff[64];
+extern char writebuff[64];
+
+extern char ringBufferA[1024];
+extern char ringBufferB[1024];
+
+
+
+typedef struct {
+int16_t ringHead;
+int16_t ringTail;
+int16_t ringDiff;
+}RingBuffer;
+
+
+typedef struct {
+unsigned long long millis;
+unsigned long long last_millis;
+unsigned int ms;
+char sec;
+char min;
+char hr;
+}Timers;
+
+
+
+
+
+
+
+void ISR_Init();
+static void TMR_System();
+static void TMR_Timer();
+Timers* GetTimer_Values();
+static void GetUart2Chars();
+static void PutUart2Chars();
+static void GetUart3Chars();
+static void PutUart3Chars();
+RingBuffer* GetDiffence_In_Pointers(RingBuffer *diffPtr);
 #line 12 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
-extern char uart_rd;
 
+extern char uart2_rd;
+extern char uart3_rd;
 
 
  void PerphialSetUp();
@@ -104,8 +112,9 @@ extern char uart_rd;
  void InitTimer1();
  void InitTimer2();
  void Uart2InterruptSetup();
- void set_USB_Interrupt();
+ void Uart3InterruptSetup();
  void set_performance_mode();
+ void PrintHandler(char c);
  void OutPuts(long long output);
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 const char newline[] = {'\r','\n','\0'};
@@ -120,10 +129,11 @@ char kk;
 char readbuff[64];
 char writebuff[64];
 
-char uart_rd;
+char uart2_rd;
+char uart3_rd;
 char txtA[20];
 char *txtPtr;
-#line 23 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+#line 24 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 void main() {
 long long pgtime = 0;
 long long Lastmillis = 0;
@@ -149,7 +159,7 @@ long long Lastmillis = 0;
  writebuff[cnt] = readbuff[cnt];
  HID_Write(writebuff, 64);
  }
- if(pgtime > 10){
+ if(pgtime > 1){
 
  pg_cnt = 1;
  T0->last_millis = T0->millis;
@@ -158,7 +168,7 @@ long long Lastmillis = 0;
  break;
  case 1:
  pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 100){
+ if(pgtime > 50){
 
  pg_cnt = 2;
  T0->last_millis = T0->millis;
@@ -167,7 +177,7 @@ long long Lastmillis = 0;
  break;
  case 2:
  pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 250){
+ if(pgtime > 150){
 
  pg_cnt = 3;
  T0->last_millis = T0->millis;
@@ -176,7 +186,8 @@ long long Lastmillis = 0;
  break;
  case 3:
  pgtime = T0->millis - T0->last_millis ;
- if(pgtime > 50){
+
+ if(pgtime > 1){
 
  pg_cnt = 0;
  T0->last_millis = T0->millis;
@@ -185,7 +196,7 @@ long long Lastmillis = 0;
  break;
  default:
  pg_cnt = 0;
- Lastmillis = T0->millis;
+ T0->last_millis = T0->millis;
  break;
  }
 
@@ -193,7 +204,7 @@ long long Lastmillis = 0;
 }
 
 void PrintHandler(char c){
- UART1_Write(c);
+ UART3_Write(c);
 }
 
 void OutPuts(long long output){

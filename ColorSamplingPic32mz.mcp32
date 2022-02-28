@@ -29,9 +29,9 @@ ActiveImageIndex=-1
 [OPENED_FILES]
 File0=ColorSamplingPic32mz.c
 File1=ISR.c
-File2=Config.c
-File3=USBdsc.c
-File4=Config.h
+File2=config.h
+File3=ISRConfig.h
+File4=Config.c
 Count=5
 [EEPROM]
 Count=0

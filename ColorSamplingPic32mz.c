@@ -13,7 +13,8 @@ char kk;
 char readbuff[64];
 char writebuff[64];
 
-char uart_rd;
+char uart2_rd;
+char uart3_rd;
 char txtA[20];
 char *txtPtr;
 
@@ -27,7 +28,7 @@ long long Lastmillis = 0;
    EI();
    pg_cnt = 0;
    while(1){
-      USB_Polling_Proc();               // Call this routine periodically
+     USB_Polling_Proc();               // Call this routine periodically
      //Timers to transition states
      T0 = GetTimer_Values();
 
@@ -36,7 +37,7 @@ long long Lastmillis = 0;
 
      
      switch(pg_cnt){
-       case 0:   //10ms time critical
+       case 0:   //usb recieve thread 2mms max
             pgtime = T0->millis - T0->last_millis;
             kk = HID_Read();
             if (kk != 0)
@@ -45,35 +46,36 @@ long long Lastmillis = 0;
                     writebuff[cnt] = readbuff[cnt];
                HID_Write(writebuff, 64);
             }
-            if(pgtime > 10){
-              // OutPuts(pgtime);
+            if(pgtime > 1){
+             //  UART3_Write_Text("Exit Thread 1 \r\n");
                pg_cnt = 1;
                T0->last_millis = T0->millis;
                LATB10_bit = 1;
             }
             break;
-       case 1:  //100ms
+       case 1:  //serial recieve function
             pgtime = T0->millis - T0->last_millis ;
-            if(pgtime > 100){
-              // OutPuts(pgtime);
+            if(pgtime > 50){
+             //  UART3_Write_Text("Exit Thread 2 \r\n");
                pg_cnt = 2;
                T0->last_millis = T0->millis;
                 LATB10_bit = 0;
             }
             break;
-       case 2:  //250ms
+       case 2:  //main thread all functions other than comms
             pgtime =  T0->millis - T0->last_millis ;
-            if(pgtime > 250){
-             //  OutPuts(pgtime);
+            if(pgtime > 150){
+            //   UART3_Write_Text("Exit Thread 3 \r\n");
                pg_cnt = 3;
                T0->last_millis = T0->millis;
                LATB10_bit = 1;
             }
             break;
-       case 3:  //50ms
+       case 3:  //5ms
             pgtime =   T0->millis - T0->last_millis ;
-            if(pgtime > 50){
-             //  OutPuts(pgtime);
+
+            if(pgtime > 1){
+             //  UART3_Write_Text("Exit Thread 4 \r\n");
                pg_cnt = 0;
                T0->last_millis = T0->millis;
                 LATB10_bit = 0;
@@ -81,7 +83,7 @@ long long Lastmillis = 0;
             break;
         default:
            pg_cnt = 0;
-           Lastmillis = T0->millis;
+           T0->last_millis = T0->millis;
            break;
      }
 
@@ -89,7 +91,7 @@ long long Lastmillis = 0;
 }
 
 void PrintHandler(char c){
-  UART1_Write(c);
+  UART3_Write(c);
 }
 
 void OutPuts(long long output){

@@ -1,15 +1,16 @@
 #include <stdint.h>
 #include <stddef.h>
 
-const unsigned int USB_VENDOR_ID   = 0x2DBC;
-const unsigned int USB_PRODUCT_ID  = 0x0001;
-const char USB_SELF_POWER          = 0x80;         // Self powered 0xC0,  0x80 bus powered
-const char USB_MAX_POWER           = 50;           // Bus power required in units of 2 mA
-const char HID_INPUT_REPORT_BYTES  = 64;
+
+const unsigned int USB_VENDOR_ID = 0x2DBC;
+const unsigned int USB_PRODUCT_ID = 0x0001;
+const char USB_SELF_POWER = 0x80;            // Self powered 0xC0,  0x80 bus powered
+const char USB_MAX_POWER = 50;               // Bus power required in units of 2 mA
+const char HID_INPUT_REPORT_BYTES = 64;
 const char HID_OUTPUT_REPORT_BYTES = 64;
-const char USB_TRANSFER_TYPE       = 0x03;         //0x03 Interrupt
-const char EP_IN_INTERVAL          = 1;
-const char EP_OUT_INTERVAL         = 1;
+const char USB_TRANSFER_TYPE = 0x03;         //0x03 Interrupt
+const char EP_IN_INTERVAL = 1;
+const char EP_OUT_INTERVAL = 1;
 
 const char USB_INTERRUPT = 0;
 const char USB_HID_EP = 1;

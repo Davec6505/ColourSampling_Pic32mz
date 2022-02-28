@@ -15,12 +15,17 @@ main
 				Unlock_IOLOCK
 				Lock_IOLOCK
 		Lock_IOLOCK
+		ISR_Init
 		InitTimer1
 		InitTimer2
-		ISR_Init
-		UART1_Init
-			Get_Fosc_kHz
-			UART_Calc_BRG
+		Uart2InterruptSetup
+			UART2_Init_Advanced
+				UART_Calc_BRG
+			UART_Set_Active
+		Uart3InterruptSetup
+			UART3_Init_Advanced
+				UART_Calc_BRG
+			UART_Set_Active
 	USB_Polling_Proc
 		DRV_USBHS_Tasks
 			PLIB_USBHS_GlobalInterruptEnable
@@ -60,8 +65,8 @@ main
 					_USB_DEVICE_EventHandler
 						_USB_DEVICE_DeInitializeAllFunctionDrivers
 							UART2_Write
-							UART1_Write
 							UART3_Write
+							UART1_Write
 							UART4_Write
 							UART5_Write
 							UART6_Write
@@ -224,8 +229,8 @@ main
 		USB_DEVICE_Tasks
 			DRV_USBHS_Open
 			UART2_Write
-			UART1_Write
 			UART3_Write
+			UART1_Write
 			UART4_Write
 			UART5_Write
 			UART6_Write
@@ -263,14 +268,28 @@ main
 		alt_memcpy
 		USB_DEVICE_HID_ReportSend
 			DRV_USBHS_DEVICE_IRPSubmit
+uart2_Rx_interrupt
+uart3_Rx_interrupt
+	TMR_System
+	TMR_Timer
+	GetUart2Chars
+		UART2_Read
+		UART2_Write
+	GetUart3Chars
+	PutUart3Chars
+	_USB_DEVICE_HID_GlobalInitialize
+uart3_Tx_interrupt
 Timer2Interrupt
 	TMR_System
 	TMR_Timer
+	GetUart2Chars
+	GetUart3Chars
+	PutUart3Chars
 	_USB_DEVICE_HID_GlobalInitialize
-USBPoll
+USBInterrupt
 	USB_Interrupt_Proc
 		DRV_USBHS_Tasks_ISR
-uart2_Rx_interrupt
-	UART2_Read
-	UART2_Write
+USBDMAInterrupt
+	USB_Dma_Interrupt_Proc
+		DRV_USBHS_Tasks_ISR_USBDMA
 Timer1Interrupt

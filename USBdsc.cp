@@ -54,7 +54,7 @@ typedef unsigned long long uintmax_t;
 typedef long ptrdiff_t;
 typedef unsigned long size_t;
 typedef unsigned long wchar_t;
-#line 4 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
+#line 5 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
 const unsigned int USB_VENDOR_ID = 0x2DBC;
 const unsigned int USB_PRODUCT_ID = 0x0001;
 const char USB_SELF_POWER = 0x80;
@@ -211,7 +211,7 @@ strd1 =
  0x03,
  {0x0409}
 };
-#line 163 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
+#line 164 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
 const struct
 {
  uint8_t bLength;
@@ -224,7 +224,7 @@ strd2 =
  0x03,
  {'M','i','k','r','o','e','l','e','k','t','r','o','n','i','k','a'}
 };
-#line 179 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
+#line 180 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
 const struct
 {
  uint8_t bLength;
@@ -244,7 +244,7 @@ const uint8_t *const stringDescriptors[3] =
  (const uint8_t *const)&strd2,
  (const uint8_t *const)&strd3
 };
-#line 202 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
+#line 203 "C:/Users/Git/ColourSampling_Pic32mz/USBdsc.c"
 const USB_DEVICE_HID_INIT hidInit0 =
 {
  USB_HID_RPT_SIZE,
