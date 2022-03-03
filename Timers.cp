@@ -1,4 +1,5 @@
-#line 1 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+#line 1 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+#line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 
@@ -57,30 +58,6 @@ typedef unsigned long size_t;
 typedef unsigned long wchar_t;
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/built_in.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
-#line 1 "c:/users/git/coloursampling_pic32mz/config.h"
-#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
-#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
-typedef struct {
-unsigned long long millis;
-unsigned long long last_millis;
-unsigned int ms;
-char sec;
-char min;
-char hr;
-}Timers;
-
-
-
-
-
-
-
-void ISR_Init();
-void InitTimer1();
-void InitTimer2();
-static void TMR_System();
-static void TMR_Timer();
-Timers* GetTimer_Values();
 #line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
@@ -148,126 +125,113 @@ extern char uart3_rd;
  void HID_Setp();
  void set_performance_mode();
  void OutPuts(long long output);
-#line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-const char newline[] = {'\r','\n','\0'};
-Timers *T0;
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
+#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
+typedef struct {
+unsigned long long millis;
+unsigned long long last_millis;
+unsigned int ms;
+char sec;
+char min;
+char hr;
+}Timers;
 
-uint16_t tmr;
-uint16_t tmr_;
-static uint16_t pg_cnt;
 
-char cnt,cntA;
-char kk;
-char readbuff[64];
-char writebuff[64];
 
-char uart2_rd;
-char uart3_rd;
-char txtA[20];
-char *txtPtr;
-#line 25 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-void main() {
-long long pgtime = 0;
-long long Lastmillis = 0;
-int test,i;
-char str[200];
-char spltstr[20][64];
-static uint8_t cntr;
- PerphialSetUp();
- EI();
- pg_cnt = 0;
- while(1){
 
- USB_Polling_Proc();
 
- T0 = GetTimer_Values();
 
- switch(pg_cnt){
- case 0:
- pgtime = T0->millis - T0->last_millis ;
 
- if(pgtime > 150){
- T0->last_millis = T0->millis;
- test = GetDiffence_In_Pointers(1);
- if(test != 0){
- pg_cnt = 3;
- break;
+void ISR_Init();
+void InitTimer1();
+void InitTimer2();
+static void TMR_System();
+static void TMR_Timer();
+Timers* GetTimer_Values();
+#line 5 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+static Timers T0;
+
+
+
+void (*TMR_Sys)();
+void (*TMR_Tmr)();
+
+
+void ISR_Init(){
+ TMR_Sys = &TMR_System;
+ TMR_Tmr = &TMR_Timer;
+}
+#line 24 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+void InitTimer1(){
+ T1CON = 0x8000;
+
+ T1IP0_bit = 0;
+ T1IP1_bit = 1;
+ T1IP2_bit = 1;
+
+ T1IS0_bit = 1;
+ T1IS1_bit = 0;
+
+ T1IF_bit = 0;
+ T1IE_bit = 1;
+ PR1 = 50000;
+ TMR1 = 0;
+}
+
+void InitTimer2(){
+ T2CON = 0x8000;
+
+ T2IP0_bit = 0;
+ T2IP1_bit = 1;
+ T2IP2_bit = 1;
+
+ T2IS0_bit = 0;
+ T2IS1_bit = 1;
+
+ T2IF_bit = 0;
+ T2IE_bit = 1;
+ PR2 = 50000;
+ TMR2 = 0;
+}
+
+static void Timer1Interrupt() iv IVT_TIMER_1 ilevel 6 ics ICS_AUTO {
+ T1IF_bit = 0;
+
+
+}
+
+static void TMR_System(){
+
+}
+#line 71 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+static void Timer2Interrupt() iv IVT_TIMER_2 ilevel 6 ics ICS_AUTO {
+ T2IF_bit = 0;
+
+ TMR_Tmr();
+}
+
+static void TMR_Timer(){
+ T0.millis++;
+ T0.ms++;
+ if(T0.ms > 999){
+ T0.ms = 0;
+ T0.sec++;
+ LATB9_bit = !LATB9_bit;
+ if(T0.sec > 59){
+ T0.sec = 0;
+ T0.min++;
+ if(T0.sec > 59){
+ T0.min = 0;
+ T0.hr++;
+ if(T0.hr > 23){
+ T0.hr = 0;
  }
- kk = HID_Read();
- if(kk != 0){
- pg_cnt = 2;
- break;
  }
-
- pg_cnt = 1;
- LATB10_bit = 1;
  }
- break;
- case 1:
- pgtime = T0->millis - T0->last_millis ;
-
-
- if(pgtime > 50){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- LATB10_bit = 0;
- }
- break;
- case 2:
- pgtime = T0->millis - T0->last_millis;
-
- if (kk != 0)
- {
-
-
- strcpy(str,readbuff);
-
-
- SplitStr(spltstr,str,',');
- strcpy(writebuff,spltstr[0]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[1]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[2]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[3]);
- strcat(writebuff,"\r\n");
- HID_Write(writebuff, 64);
-
- pg_cnt = 0;
- break;
- }
- if(pgtime > 0){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- }
- break;
- case 3:
- pgtime = T0->millis - T0->last_millis ;
- if(test != 0){
- ReadBack_RingBufferB();
- pg_cnt = 0;
- break;
- }
- if(pgtime > 0){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- }
- break;
- default:
- pg_cnt = 0;
- T0->last_millis = T0->millis;
- break;
- }
-
  }
 }
 
 
-
-void OutPuts(long long output){
- sprintf(txtA,"%d",output);
- txtPtr = strncat(txtA,newline,strlen(newline));
- memcpy(writebuff,txtPtr,strlen(txtPtr));
- HID_Write(writebuff, 64);
+Timers* GetTimer_Values(){
+ return &T0;
 }

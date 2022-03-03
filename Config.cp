@@ -56,25 +56,10 @@ typedef long ptrdiff_t;
 typedef unsigned long size_t;
 typedef unsigned long wchar_t;
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/built_in.h"
-#line 1 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
-#line 12 "c:/users/git/coloursampling_pic32mz/isrconfig.h"
-extern char readbuff[64];
-extern char writebuff[64];
-
-extern char ringBufferA[1024];
-extern char ringBufferB[1024];
-
-
-
-typedef struct {
-int16_t ringHead;
-int16_t ringTail;
-int16_t ringDiff;
-}RingBuffer;
-
-
+#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
 typedef struct {
 unsigned long long millis;
 unsigned long long last_millis;
@@ -91,15 +76,67 @@ char hr;
 
 
 void ISR_Init();
+void InitTimer1();
+void InitTimer2();
 static void TMR_System();
 static void TMR_Timer();
 Timers* GetTimer_Values();
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
+#line 13 "c:/users/git/coloursampling_pic32mz/uart.h"
+extern char readbuff[64];
+extern char writebuff[64];
+
+extern char ringBufferA[1024];
+extern char ringBufferB[1024];
+
+
+
+
+typedef struct {
+int ringHead;
+int ringTail;
+int ringDiff;
+}RingBuffer;
+
+
+
+
+
+
+
+void UART_Init();
+void Uart2InterruptSetup();
+void Uart3InterruptSetup();
 static void GetUart2Chars();
 static void PutUart2Chars();
+void Enable_Uart3_Interrupts(char rx_tx);
 static void GetUart3Chars();
 static void PutUart3Chars();
-RingBuffer* GetDiffence_In_Pointers(RingBuffer *diffPtr);
-#line 12 "c:/users/git/coloursampling_pic32mz/config.h"
+void ReadBack_RingBufferB();
+int GetDiffence_In_Pointers(char buffer);
+void PrintHandler(char c);
+#line 1 "c:/users/git/coloursampling_pic32mz/stringadv.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdarg.h"
+
+
+typedef void * va_list[1];
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
+#line 16 "c:/users/git/coloursampling_pic32mz/stringadv.h"
+extern char *SplitBuff[64];
+
+
+
+
+
+
+
+
+
+void ArrClear(char** arr,int row);
+void SplitStr(char** arr,char* str,char a);
+#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -109,12 +146,7 @@ extern char uart3_rd;
 
  void PerphialSetUp();
  void HID_Setp();
- void InitTimer1();
- void InitTimer2();
- void Uart2InterruptSetup();
- void Uart3InterruptSetup();
  void set_performance_mode();
- void PrintHandler(char c);
  void OutPuts(long long output);
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
 void PerphialSetUp(){
@@ -138,16 +170,12 @@ void PerphialSetUp(){
  InitTimer2();
 
 
- URXISEL0_bit = 1;
- URXISEL1_bit = 1;
- UTXISEL0_bit = 1;
- UTXISEL1_bit = 1;
 
-
+ UART_Init();
  Uart2InterruptSetup();
  Uart3InterruptSetup();
 
-
+ MM_Init();
 }
 
 void HID_Setp(){
@@ -160,89 +188,6 @@ void HID_Setp(){
  IPC33SET |= 7ul << 10;
  IPC33CLR |= 3ul << 8;
 
-}
-
-
-void InitTimer1(){
- T1CON = 0x8000;
-
- T1IP0_bit = 1;
- T1IP1_bit = 1;
- T1IP2_bit = 1;
-
- T1IS0_bit = 0;
- T1IS1_bit = 0;
- T1IF_bit = 0;
- T1IE_bit = 1;
- PR1 = 50000;
- TMR1 = 0;
-}
-
-void InitTimer2(){
- T2CON = 0x8000;
-
- T2IP0_bit = 1;
- T2IP1_bit = 1;
- T2IP2_bit = 1;
-
- T2IS0_bit = 1;
- T2IS1_bit = 0;
- T2IF_bit = 0;
- T2IE_bit = 1;
- PR2 = 50000;
- TMR2 = 0;
-}
-
-
-void Uart2InterruptSetup(){
-
- UART2_Init_Advanced(115200, 200000, _UART_LOW_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
-
- UART_Set_Active(&UART2_Read, &UART2_Write, &UART2_Data_Ready, &UART2_Tx_Idle);
-
- Delay_ms(100);
-
- URXISEL0_bit = 0;
- URXISEL1_bit = 1;
-
-
- U2RXIP0_bit = 0;
- U2RXIP1_bit = 1;
- U2RXIP2_bit = 1;
-
- U3RXIS0_bit = 1;
- U3RXIS1_bit = 1;
-
- URXISEL1_U2STA_bit = 0;
- IEC4.B18 = 0;
- U2RXIF_bit = 0;
-}
-
-void Uart3InterruptSetup(){
-
- UART3_Init_Advanced(115200, 200000, _UART_HIGH_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
-
- UART_Set_Active(&UART3_Read, &UART3_Write, &UART3_Data_Ready, &UART3_Tx_Idle);
-
- Delay_ms(100);
-
-
- U3STAbits.UTXISEL = 0;
- U3STAbits.URXISEL = 0;
-
- LPBACK_bit = 1;
-
-
- U3RXIP0_bit = 0;
- U3RXIP1_bit = 1;
- U3RXIP2_bit = 1;
-
- U3RXIS0_bit = 0;
- U3RXIS1_bit = 1;
- URXISEL1_U3STA_bit = 0;
-
- IEC4.B30 = 1;
- U3RXIF_bit = 0;
 }
 
 void set_performance_mode()
@@ -293,7 +238,7 @@ void set_performance_mode()
  PRECONbits.PFMSECEN = 0;
  PRECONbits.PREFEN = 0b11;
  PRECONbits.PFMWS = 0b010;
-#line 190 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
+#line 103 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
  SYSKEY = 0x33333333;
 
 }

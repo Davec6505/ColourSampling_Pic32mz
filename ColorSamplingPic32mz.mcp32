@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=Config.c
+Value=ColorSamplingPic32mz.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -19,8 +19,10 @@ Value=
 File0=ColorSamplingPic32mz.c
 File1=Config.c
 File2=USBdsc.c
-File3=ISR.c
-Count=4
+File3=StringAdv.c
+File4=UART.c
+File5=Timers.c
+Count=6
 [BINARIES]
 Count=0
 [IMAGES]
@@ -28,25 +30,26 @@ Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
 File0=ColorSamplingPic32mz.c
-File1=ISR.c
-File2=config.h
-File3=ISRConfig.h
-File4=Config.c
-Count=5
+File1=StringAdv.h
+File2=StringAdv.c
+Count=3
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
 Count=0
 [OTHER_FILES]
-Count=0
+File0=Comments.txt
+Count=1
 [SEARCH_PATH]
 Count=0
 [HEADER_PATH]
 Count=0
 [HEADERS]
 File0=Config.h
-File1=ISRConfig.h
-Count=2
+File1=StringAdv.h
+File2=UART.h
+File3=Timers.h
+Count=4
 [PLDS]
 Count=0
 [Useses]
@@ -58,7 +61,11 @@ File4=C_Type
 File5=Conversions
 File6=C_String
 File7=PrintOut
-Count=8
+File8=C_Stdlib
+File9=FLASH
+File10=I2C
+File11=MemManager
+Count=12
 [INTERRUPT_DEFS]
 EBASE=9FC01000
 VECTOR_SPACEING=32
@@ -67,5 +74,5 @@ USE_SRS=7
 [EXPANDED_NODES]
 0=ColorSamplingPic32mz.mcp32
 1=Sources
-6=Header Files
+8=Header Files
 Count=3

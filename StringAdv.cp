@@ -1,4 +1,10 @@
-#line 1 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+#line 1 "C:/Users/Git/ColourSampling_Pic32mz/StringAdv.c"
+#line 1 "c:/users/git/coloursampling_pic32mz/stringadv.h"
+#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdarg.h"
+
+
+typedef void * va_list[1];
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 
@@ -82,7 +88,19 @@ static void TMR_System();
 static void TMR_Timer();
 Timers* GetTimer_Values();
 #line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
-#line 1 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/stringadv.h"
+#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
+extern uint16_t tmr;
+extern uint16_t tmr_;
+
+extern char uart2_rd;
+extern char uart3_rd;
+
+
+ void PerphialSetUp();
+ void HID_Setp();
+ void set_performance_mode();
+ void OutPuts(long long output);
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 #line 13 "c:/users/git/coloursampling_pic32mz/uart.h"
 extern char readbuff[64];
@@ -117,12 +135,6 @@ static void PutUart3Chars();
 void ReadBack_RingBufferB();
 int GetDiffence_In_Pointers(char buffer);
 void PrintHandler(char c);
-#line 1 "c:/users/git/coloursampling_pic32mz/stringadv.h"
-#line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdarg.h"
-
-
-typedef void * va_list[1];
-#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 16 "c:/users/git/coloursampling_pic32mz/stringadv.h"
 extern char *SplitBuff[64];
 
@@ -136,138 +148,38 @@ extern char *SplitBuff[64];
 
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
-#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
-extern uint16_t tmr;
-extern uint16_t tmr_;
-
-extern char uart2_rd;
-extern char uart3_rd;
-
-
- void PerphialSetUp();
- void HID_Setp();
- void set_performance_mode();
- void OutPuts(long long output);
-#line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-const char newline[] = {'\r','\n','\0'};
-Timers *T0;
-
-uint16_t tmr;
-uint16_t tmr_;
-static uint16_t pg_cnt;
-
-char cnt,cntA;
-char kk;
-char readbuff[64];
-char writebuff[64];
-
-char uart2_rd;
-char uart3_rd;
-char txtA[20];
-char *txtPtr;
-#line 25 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
-void main() {
-long long pgtime = 0;
-long long Lastmillis = 0;
-int test,i;
-char str[200];
-char spltstr[20][64];
-static uint8_t cntr;
- PerphialSetUp();
- EI();
- pg_cnt = 0;
- while(1){
-
- USB_Polling_Proc();
-
- T0 = GetTimer_Values();
-
- switch(pg_cnt){
- case 0:
- pgtime = T0->millis - T0->last_millis ;
-
- if(pgtime > 150){
- T0->last_millis = T0->millis;
- test = GetDiffence_In_Pointers(1);
- if(test != 0){
- pg_cnt = 3;
- break;
+#line 8 "C:/Users/Git/ColourSampling_Pic32mz/StringAdv.c"
+void ArrClear(char arr[][64],int row){
+ int i,j;
+ for(i=0;i<row;i++){
+ for(j=0;j<sizeof((*arr));j++){
+ arr[i][j] = 0;
  }
- kk = HID_Read();
- if(kk != 0){
- pg_cnt = 2;
- break;
- }
-
- pg_cnt = 1;
- LATB10_bit = 1;
- }
- break;
- case 1:
- pgtime = T0->millis - T0->last_millis ;
-
-
- if(pgtime > 50){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- LATB10_bit = 0;
- }
- break;
- case 2:
- pgtime = T0->millis - T0->last_millis;
-
- if (kk != 0)
- {
-
-
- strcpy(str,readbuff);
-
-
- SplitStr(spltstr,str,',');
- strcpy(writebuff,spltstr[0]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[1]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[2]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[3]);
- strcat(writebuff,"\r\n");
- HID_Write(writebuff, 64);
-
- pg_cnt = 0;
- break;
- }
- if(pgtime > 0){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- }
- break;
- case 3:
- pgtime = T0->millis - T0->last_millis ;
- if(test != 0){
- ReadBack_RingBufferB();
- pg_cnt = 0;
- break;
- }
- if(pgtime > 0){
- T0->last_millis = T0->millis;
- pg_cnt = 0;
- }
- break;
- default:
- pg_cnt = 0;
- T0->last_millis = T0->millis;
- break;
- }
-
  }
 }
+#line 20 "C:/Users/Git/ColourSampling_Pic32mz/StringAdv.c"
+void SplitStr(char arr[][64],char* str,char a){
+int i,j,k; i=j=k=0;
 
+ for(i=0;i<strlen(str);i++){
+ arr[j][k] = str[i];
 
+ if(str[i] == a){
+ arr[j][k] = 0;
+ j++;
+ k=0;
+ }
+ k++;
+ if(str[i] == 0)
+ break;
+ }
+ PrintOut(PrintHandler,"\r\n"
+ " * arr[0]   %s\r\n"
+ " * arr[1]   %s\r\n"
+ " * arr[2]   %s\r\n"
+ " * arr[3]   %s\r\n"
+ " * arr[4]   %s\r\n"
+ " * arr[5]   %s\r\n"
+ , arr[0],arr[1],arr[2],arr[3],arr[4]);
 
-void OutPuts(long long output){
- sprintf(txtA,"%d",output);
- txtPtr = strncat(txtA,newline,strlen(newline));
- memcpy(writebuff,txtPtr,strlen(txtPtr));
- HID_Write(writebuff, 64);
 }

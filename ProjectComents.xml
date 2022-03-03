@@ -1,0 +1,13 @@
+<ProjectComents>
+	<Attributes>
+		<Url></Url>
+		<Image></Image>
+		<File>Comments.txt</File>
+	</Attributes>
+	<Events>
+		<OnLeftClick>OpenFile</OnLeftClick>
+		<OnRightClick></OnRightClick>
+		<OnDblClick></OnDblClick>
+		<OnMouseOver></OnMouseOver>
+	</Events>
+</ProjectComents>

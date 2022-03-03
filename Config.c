@@ -21,17 +21,13 @@ void PerphialSetUp(){
     InitTimer1();
     InitTimer2();
     
-    //Interrupt delect mof=de 11 = do not use
-    URXISEL0_bit       = 1;
-    URXISEL1_bit       = 1;
-    UTXISEL0_bit       = 1;
-    UTXISEL1_bit       = 1;
-    
-    
+
+
+    UART_Init();
     Uart2InterruptSetup();
     Uart3InterruptSetup();
 
-    
+    MM_Init();
 }
 
 void HID_Setp(){
@@ -44,89 +40,6 @@ void HID_Setp(){
     IPC33SET |= 7ul << 10;
     IPC33CLR |= 3ul << 8;
 
-}
-
-//Place/Copy this part in declaration section
-void InitTimer1(){
-  T1CON                 = 0x8000;
-  //Priority      7
-  T1IP0_bit             = 1;
-  T1IP1_bit             = 1;
-  T1IP2_bit             = 1;
-  //Subpriority   0
-  T1IS0_bit             = 0;
-  T1IS1_bit             = 0;
-  T1IF_bit              = 0;
-  T1IE_bit              = 1;
-  PR1                   = 50000;
-  TMR1                  = 0;
-}
-
-void InitTimer2(){
-  T2CON             = 0x8000;
-  //Priority     7
-  T2IP0_bit         = 1;
-  T2IP1_bit         = 1;
-  T2IP2_bit         = 1;
-  //SubPriotity  1
-  T2IS0_bit         = 1;
-  T2IS1_bit         = 0;
-  T2IF_bit          = 0;
-  T2IE_bit          = 1;
-  PR2               = 50000;
-  TMR2              = 0;
-}
-
-
-void Uart2InterruptSetup(){
-
-    UART2_Init_Advanced(115200, 200000, _UART_LOW_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
-    //UART2_Init(13000);       // Initialize UART module at 9600 bps
-    UART_Set_Active(&UART2_Read, &UART2_Write, &UART2_Data_Ready, &UART2_Tx_Idle); // set UART2 active
-
-    Delay_ms(100);             // Wait for UART module to stabilize
-    //LPBACK_bit = 1;
-    URXISEL0_bit       = 0;
-    URXISEL1_bit       = 1;
-
-    // Set priority 6
-    U2RXIP0_bit        = 0;
-    U2RXIP1_bit        = 1;
-    U2RXIP2_bit        = 1;
-     // Set Sub priority
-    U3RXIS0_bit        = 1;
-    U3RXIS1_bit        = 1;
-    
-    URXISEL1_U2STA_bit = 0;
-    IEC4.B18           = 0;    // Enable UART2 RX interrupt
-    U2RXIF_bit = 0;            // Ensure interrupt is not pending
-}
-
-void Uart3InterruptSetup(){
-
-    UART3_Init_Advanced(115200, 200000, _UART_HIGH_SPEED, _UART_8BIT_NOPARITY, _UART_ONE_STOPBIT);
-    //UART3_Init(115200);       // Initialize UART module at 9600 bps
-    UART_Set_Active(&UART3_Read, &UART3_Write, &UART3_Data_Ready, &UART3_Tx_Idle); // set UART2 active
-
-    Delay_ms(100);             // Wait for UART module to stabilize
-    
-    //4DEEP FIFO 2=3/4 1=FULL 0=1BYTE
-    U3STAbits.UTXISEL  = 0;
-    U3STAbits.URXISEL  = 0;
-
-    LPBACK_bit = 1;
-
-    // Set priority 6
-    U3RXIP0_bit        = 0;
-    U3RXIP1_bit        = 1;
-    U3RXIP2_bit        = 1;
-    // Set Sub priority
-    U3RXIS0_bit        = 0;
-    U3RXIS1_bit        = 1;
-    URXISEL1_U3STA_bit = 0;
-    
-    IEC4.B30           = 1;    // Enable UART3 RX interrupt
-    U3RXIF_bit         = 0;    // Ensure interrupt is not pending
 }
 
 void set_performance_mode()

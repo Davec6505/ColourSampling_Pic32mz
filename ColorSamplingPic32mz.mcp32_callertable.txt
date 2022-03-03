@@ -18,6 +18,7 @@ main
 		ISR_Init
 		InitTimer1
 		InitTimer2
+		UART_Init
 		Uart2InterruptSetup
 			UART2_Init_Advanced
 				UART_Calc_BRG
@@ -26,6 +27,8 @@ main
 			UART3_Init_Advanced
 				UART_Calc_BRG
 			UART_Set_Active
+			Enable_Uart3_Interrupts
+		MM_Init
 	USB_Polling_Proc
 		DRV_USBHS_Tasks
 			PLIB_USBHS_GlobalInterruptEnable
@@ -253,12 +256,24 @@ main
 		DRV_USBHS_DEVICE_IRPCancelAll
 		DRV_USBHS_DEVICE_TestModeEnter
 	GetTimer_Values
+	GetDiffence_In_Pointers
 	HID_Read
 		DRV_USBHS_Tasks
 		USB_DEVICE_Tasks
 		USB_DEVICE_Open
 		USB_DEVICE_EventHandlerSet
 		USB_DEVICE_HID_ReportReceive
+	strcpy
+	SplitStr
+		strlen
+		PrintOut
+			_doprntout
+				isdigit
+				scale
+				fround
+				PrintHandler
+					UART3_Write
+	strcat
 	HID_Write
 		DRV_USBHS_Tasks
 		USB_DEVICE_Tasks
@@ -268,28 +283,59 @@ main
 		alt_memcpy
 		USB_DEVICE_HID_ReportSend
 			DRV_USBHS_DEVICE_IRPSubmit
-uart2_Rx_interrupt
-uart3_Rx_interrupt
-	TMR_System
-	TMR_Timer
-	GetUart2Chars
-		UART2_Read
-		UART2_Write
-	GetUart3Chars
-	PutUart3Chars
-	_USB_DEVICE_HID_GlobalInitialize
+	ReadBack_RingBufferB
+		GetUart2Chars
+			UART2_Read
+			UART2_Write
+		GetUart3Chars
+		PutUart3Chars
+		TMR_System
+		TMR_Timer
+		I2C1_Stop
+			I2C1_Wait_For_Idle
+				I2C1_Is_Idle
+				PrintHandler
+		I2C3_Stop
+			I2C3_Wait_For_Idle
+				I2C3_Is_Idle
+				PrintHandler
+		I2C4_Stop
+			I2C4_Wait_For_Idle
+				I2C4_Is_Idle
+				PrintHandler
+		I2C5_Stop
+			I2C5_Wait_For_Idle
+				I2C5_Is_Idle
+				PrintHandler
+		_USB_DEVICE_HID_GlobalInitialize
 uart3_Tx_interrupt
+Timer1Interrupt
 Timer2Interrupt
-	TMR_System
-	TMR_Timer
 	GetUart2Chars
 	GetUart3Chars
 	PutUart3Chars
+	TMR_System
+	TMR_Timer
+	I2C1_Stop
+	I2C3_Stop
+	I2C4_Stop
+	I2C5_Stop
 	_USB_DEVICE_HID_GlobalInitialize
+uart3_Rx_interrupt
+	GetUart2Chars
+	GetUart3Chars
+	PutUart3Chars
+	TMR_System
+	TMR_Timer
+	I2C1_Stop
+	I2C3_Stop
+	I2C4_Stop
+	I2C5_Stop
+	_USB_DEVICE_HID_GlobalInitialize
+uart2_Rx_interrupt
 USBInterrupt
 	USB_Interrupt_Proc
 		DRV_USBHS_Tasks_ISR
 USBDMAInterrupt
 	USB_Dma_Interrupt_Proc
 		DRV_USBHS_Tasks_ISR_USBDMA
-Timer1Interrupt
