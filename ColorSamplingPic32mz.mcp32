@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=ColorSamplingPic32mz.c
+Value=RTCC.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -22,7 +22,8 @@ File2=USBdsc.c
 File3=StringAdv.c
 File4=UART.c
 File5=Timers.c
-Count=6
+File6=RTCC.c
+Count=7
 [BINARIES]
 Count=0
 [IMAGES]
@@ -32,7 +33,13 @@ ActiveImageIndex=-1
 File0=ColorSamplingPic32mz.c
 File1=StringAdv.h
 File2=StringAdv.c
-Count=3
+File3=Config.h
+File4=Config.c
+File5=Timers.h
+File6=Timers.c
+File7=RTCC.c
+File8=RTCC.h
+Count=9
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -49,7 +56,8 @@ File0=Config.h
 File1=StringAdv.h
 File2=UART.h
 File3=Timers.h
-Count=4
+File4=RTCC.h
+Count=5
 [PLDS]
 Count=0
 [Useses]
@@ -74,5 +82,5 @@ USE_SRS=7
 [EXPANDED_NODES]
 0=ColorSamplingPic32mz.mcp32
 1=Sources
-8=Header Files
+9=Header Files
 Count=3

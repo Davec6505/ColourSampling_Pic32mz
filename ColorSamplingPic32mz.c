@@ -39,7 +39,7 @@ static uint8_t cntr;
      T0 = GetTimer_Values();
 
      switch(pg_cnt){
-       case 0:  //main thread
+       case MAIN:  //main thread
             pgtime =  T0->millis - T0->last_millis ;
             
             if(pgtime > 150){
@@ -59,7 +59,7 @@ static uint8_t cntr;
               LATB10_bit = 1;
             }
             break;
-        case 1:  //Secondary thread for LCD etc
+        case SECONDARY:  //Secondary thread for LCD etc
             pgtime = T0->millis - T0->last_millis ;
             
             
@@ -69,27 +69,14 @@ static uint8_t cntr;
               LATB10_bit = 0;
             }
             break;
-       case 2:   //usb recieve thread 2mms max
+       case USB:   //usb recieve thread 2mms max
             pgtime = T0->millis - T0->last_millis;
             //Get the data from the USB buffer
             if (kk != 0)
             {
-
-              // ArrClear(spltstr,20);
-               strcpy(str,readbuff);
-               //strcpy(writebuff,str);
-              // HID_Write(writebuff, 64);
-               SplitStr(spltstr,str,',');
-               strcpy(writebuff,spltstr[0]);
-               strcat(writebuff,"\r\n");
-               strcat(writebuff,spltstr[1]);
-               strcat(writebuff,"\r\n");
-               strcat(writebuff,spltstr[2]);
-               strcat(writebuff,"\r\n");
-               strcat(writebuff,spltstr[3]);
-               strcat(writebuff,"\r\n");
-               HID_Write(writebuff, 64);
-
+                strcpy(str,readbuff);
+                SplitStr(spltstr,str,',');
+                OutPuts(spltstr,str,0);
                pg_cnt = 0;
                break;
             }
@@ -98,7 +85,7 @@ static uint8_t cntr;
                pg_cnt = 0;
             }
             break;
-       case 3:  //Serial data
+       case UART:  //Serial data
             pgtime = T0->millis - T0->last_millis ;
             if(test != 0){
               ReadBack_RingBufferB();
@@ -121,11 +108,27 @@ static uint8_t cntr;
 
 
 
-void OutPuts(long long output){
-    sprintf(txtA,"%d",output);
-    txtPtr = strncat(txtA,newline,strlen(newline));
-    memcpy(writebuff,txtPtr,strlen(txtPtr));
-    HID_Write(writebuff, 64);
+void OutPuts(char arr[][64],char *str,char type){
+int rows = sizeof(arr);
+int i;
+   memset(writebuff,0,64);
+   switch(type){
+     case 0:
+
+           strncpy(writebuff,arr[0],strlen(arr[0]));
+           strcat(writebuff,"\r\n");
+           for(i = 1; i < rows+1;i++){
+             strcat(writebuff,arr[i]);
+             strcat(writebuff,"\r\n");
+           }
+           break;
+     case 1:
+           strncpy(writebuff,str,strlen(str));
+          break;
+     default:
+          break;
+   }
+   HID_Write(writebuff, 64);
 }
 
 

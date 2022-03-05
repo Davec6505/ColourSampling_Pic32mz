@@ -1,0 +1,28 @@
+#ifndef RTCC_H
+#define RTCC_H
+
+//////////////////////////////////////////////////////////////
+//includes
+
+
+
+/////////////////////////////////////////////////////////////
+//consts and vars
+extern unsigned long time;// set time to 04 hr, 15 min, 33 sec
+extern unsigned long date;// set date to Friday 27 Oct 2006
+
+////////////////////////////////////////////////////////////
+//structs unions enums
+
+
+
+////////////////////////////////////////////////////////////
+//function Prototypes
+void IniyRTCC();
+void InitRTCC_Tnterrupt();
+void RTCC_Calibrate();
+void SetRTCCInitial();
+void SetRTCC();
+
+
+#endif

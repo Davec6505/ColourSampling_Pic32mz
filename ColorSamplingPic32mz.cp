@@ -70,7 +70,22 @@ char hr;
 }Timers;
 
 
+typedef struct{
+char yr10;
+char yr01;
+char mn10;
+char mn01;
+char dy10;
+char dy01;
+char wk;
 
+char hr10;
+char hr01;
+char min10;
+char min01;
+char sec10;
+char sec01;
+}RTCC;
 
 
 
@@ -136,7 +151,33 @@ extern char *SplitBuff[64];
 
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
-#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
+
+
+
+
+
+
+
+
+
+
+extern unsigned long time;
+extern unsigned long date;
+
+
+
+
+
+
+
+
+void IniyRTCC();
+void InitRTCC_Tnterrupt();
+void RTCC_Calibrate();
+void SetRTCCInitial();
+void SetRTCC();
+#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -144,10 +185,19 @@ extern char uart2_rd;
 extern char uart3_rd;
 
 
+
+enum Thread{
+MAIN,
+SECONDARY,
+USB,
+UART};
+
+
+
  void PerphialSetUp();
  void HID_Setp();
  void set_performance_mode();
- void OutPuts(long long output);
+ void OutPuts(char arr[][64],char* str,char type);
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 const char newline[] = {'\r','\n','\0'};
 Timers *T0;
@@ -183,7 +233,7 @@ static uint8_t cntr;
  T0 = GetTimer_Values();
 
  switch(pg_cnt){
- case 0:
+ case MAIN:
  pgtime = T0->millis - T0->last_millis ;
 
  if(pgtime > 150){
@@ -203,7 +253,7 @@ static uint8_t cntr;
  LATB10_bit = 1;
  }
  break;
- case 1:
+ case SECONDARY:
  pgtime = T0->millis - T0->last_millis ;
 
 
@@ -213,27 +263,14 @@ static uint8_t cntr;
  LATB10_bit = 0;
  }
  break;
- case 2:
+ case USB:
  pgtime = T0->millis - T0->last_millis;
 
  if (kk != 0)
  {
-
-
  strcpy(str,readbuff);
-
-
  SplitStr(spltstr,str,',');
- strcpy(writebuff,spltstr[0]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[1]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[2]);
- strcat(writebuff,"\r\n");
- strcat(writebuff,spltstr[3]);
- strcat(writebuff,"\r\n");
- HID_Write(writebuff, 64);
-
+ OutPuts(spltstr,str,0);
  pg_cnt = 0;
  break;
  }
@@ -242,7 +279,7 @@ static uint8_t cntr;
  pg_cnt = 0;
  }
  break;
- case 3:
+ case UART:
  pgtime = T0->millis - T0->last_millis ;
  if(test != 0){
  ReadBack_RingBufferB();
@@ -265,9 +302,25 @@ static uint8_t cntr;
 
 
 
-void OutPuts(long long output){
- sprintf(txtA,"%d",output);
- txtPtr = strncat(txtA,newline,strlen(newline));
- memcpy(writebuff,txtPtr,strlen(txtPtr));
+void OutPuts(char arr[][64],char *str,char type){
+int rows = sizeof(arr);
+int i;
+ memset(writebuff,0,64);
+ switch(type){
+ case 0:
+
+ strncpy(writebuff,arr[0],strlen(arr[0]));
+ strcat(writebuff,"\r\n");
+ for(i = 1; i < rows+1;i++){
+ strcat(writebuff,arr[i]);
+ strcat(writebuff,"\r\n");
+ }
+ break;
+ case 1:
+ strncpy(writebuff,str,strlen(str));
+ break;
+ default:
+ break;
+ }
  HID_Write(writebuff, 64);
 }

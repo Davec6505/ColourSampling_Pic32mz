@@ -113,7 +113,33 @@ extern char *SplitBuff[64];
 
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
-#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
+
+
+
+
+
+
+
+
+
+
+extern unsigned long time;
+extern unsigned long date;
+
+
+
+
+
+
+
+
+void IniyRTCC();
+void InitRTCC_Tnterrupt();
+void RTCC_Calibrate();
+void SetRTCCInitial();
+void SetRTCC();
+#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -121,10 +147,19 @@ extern char uart2_rd;
 extern char uart3_rd;
 
 
+
+enum Thread{
+MAIN,
+SECONDARY,
+USB,
+UART};
+
+
+
  void PerphialSetUp();
  void HID_Setp();
  void set_performance_mode();
- void OutPuts(long long output);
+ void OutPuts(char arr[][64],char* str,char type);
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 #line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
 typedef struct {
@@ -137,7 +172,22 @@ char hr;
 }Timers;
 
 
+typedef struct{
+char yr10;
+char yr01;
+char mn10;
+char mn01;
+char dy10;
+char dy01;
+char wk;
 
+char hr10;
+char hr01;
+char min10;
+char min01;
+char sec10;
+char sec01;
+}RTCC;
 
 
 
@@ -161,7 +211,7 @@ void ISR_Init(){
  TMR_Sys = &TMR_System;
  TMR_Tmr = &TMR_Timer;
 }
-#line 24 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+#line 25 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
 void InitTimer1(){
  T1CON = 0x8000;
 
@@ -203,7 +253,7 @@ static void Timer1Interrupt() iv IVT_TIMER_1 ilevel 6 ics ICS_AUTO {
 static void TMR_System(){
 
 }
-#line 71 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
+#line 72 "C:/Users/Git/ColourSampling_Pic32mz/Timers.c"
 static void Timer2Interrupt() iv IVT_TIMER_2 ilevel 6 ics ICS_AUTO {
  T2IF_bit = 0;
 

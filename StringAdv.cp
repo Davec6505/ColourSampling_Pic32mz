@@ -76,7 +76,22 @@ char hr;
 }Timers;
 
 
+typedef struct{
+char yr10;
+char yr01;
+char mn10;
+char mn01;
+char dy10;
+char dy01;
+char wk;
 
+char hr10;
+char hr01;
+char min10;
+char min01;
+char sec10;
+char sec01;
+}RTCC;
 
 
 
@@ -89,7 +104,33 @@ static void TMR_Timer();
 Timers* GetTimer_Values();
 #line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/stringadv.h"
-#line 13 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
+
+
+
+
+
+
+
+
+
+
+extern unsigned long time;
+extern unsigned long date;
+
+
+
+
+
+
+
+
+void IniyRTCC();
+void InitRTCC_Tnterrupt();
+void RTCC_Calibrate();
+void SetRTCCInitial();
+void SetRTCC();
+#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -97,10 +138,19 @@ extern char uart2_rd;
 extern char uart3_rd;
 
 
+
+enum Thread{
+MAIN,
+SECONDARY,
+USB,
+UART};
+
+
+
  void PerphialSetUp();
  void HID_Setp();
  void set_performance_mode();
- void OutPuts(long long output);
+ void OutPuts(char arr[][64],char* str,char type);
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 #line 13 "c:/users/git/coloursampling_pic32mz/uart.h"
 extern char readbuff[64];
@@ -163,23 +213,16 @@ int i,j,k; i=j=k=0;
 
  for(i=0;i<strlen(str);i++){
  arr[j][k] = str[i];
-
  if(str[i] == a){
  arr[j][k] = 0;
  j++;
  k=0;
+ continue;
  }
  k++;
- if(str[i] == 0)
+ if(str[i] == 0 || str[i] > 127 || str[i] < 32)
  break;
  }
- PrintOut(PrintHandler,"\r\n"
- " * arr[0]   %s\r\n"
- " * arr[1]   %s\r\n"
- " * arr[2]   %s\r\n"
- " * arr[3]   %s\r\n"
- " * arr[4]   %s\r\n"
- " * arr[5]   %s\r\n"
- , arr[0],arr[1],arr[2],arr[3],arr[4]);
-
+ arr[j][k] = 0;
+#line 46 "C:/Users/Git/ColourSampling_Pic32mz/StringAdv.c"
 }

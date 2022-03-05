@@ -18747,6 +18747,7 @@ datatwen_usbe4csr1_bit
 datatwen_usbe5csr1_bit
 datatwen_usbe6csr1_bit
 datatwen_usbe7csr1_bit
+date
 day01
 day01
 day01
@@ -32977,8 +32978,10 @@ initid7_sbt6elog1_bit
 initid7_sbt7elog1_bit
 initid7_sbt8elog1_bit
 initid7_sbt9elog1_bit
+initrtcc_tnterrupt
 inittimer1
 inittimer2
+iniyrtcc
 int0ep
 int0ep
 int0ep
@@ -43679,6 +43682,8 @@ rtcalrminv
 rtcalrminvbits
 rtcalrmset
 rtcalrmsetbits
+rtcc_calibrate
+rtcc_interrupt
 rtccie
 rtccie
 rtccie
@@ -51465,6 +51470,8 @@ setend_bit
 setendc
 setendc
 setendc_bit
+setrtcc
+setrtccinitial
 setup
 setup
 setup_bit
@@ -57323,6 +57330,7 @@ thsbt2
 thsbt2_bit
 thsbt3
 thsbt3_bit
+time
 tmr
 tmr_
 tmr_sys
