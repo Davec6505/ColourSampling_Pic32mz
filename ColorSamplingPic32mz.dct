@@ -32978,10 +32978,10 @@ initid7_sbt6elog1_bit
 initid7_sbt7elog1_bit
 initid7_sbt8elog1_bit
 initid7_sbt9elog1_bit
+initrtcc
 initrtcc_tnterrupt
 inittimer1
 inittimer2
-iniyrtcc
 int0ep
 int0ep
 int0ep
@@ -42237,6 +42237,7 @@ readopcode6
 readopcode6_bit
 readopcode7
 readopcode7_bit
+readtime
 readtranferhandle
 receivedatabuffer
 refclki1r
@@ -43684,6 +43685,7 @@ rtcalrmset
 rtcalrmsetbits
 rtcc_calibrate
 rtcc_interrupt
+rtcc_on
 rtccie
 rtccie
 rtccie

@@ -14,24 +14,29 @@ J	L_main2
 NOP	
 L_main4:
 LW	R2, Offset(_T0+0)(GP)
-LW	R7, 4(R2)
-LW	R6, 0(R2)
+LW	R5, 4(R2)
+LW	R4, 0(R2)
 LW	R2, Offset(_T0+0)(GP)
 ADDIU	R2, R2, 8
 LW	R3, 4(R2)
 LW	R2, 0(R2)
-SLTU	R30, R6, R2
-SUBU	R4, R6, R2
-SUBU	R5, R7, R3
-SUBU	R5, R5, R30
-SLTI	R2, R5, 0
+SLTU	R30, R4, R2
+SUBU	R6, R4, R2
+SUBU	R7, R5, R3
+SUBU	R7, R7, R30
+_LX	
+EXT	R3, R2, BitPos(LATD0_bit+0), 1
+_LX	
+INS	R2, R3, BitPos(LATB10_bit+0), 1
+_SX	
+SLTI	R2, R7, 0
 BNE	R2, R0, L__main26
 NOP	
-XORI	R2, R5, 0
+XORI	R2, R7, 0
 SLTIU	R2, R2, 1
 BEQ	R2, R0, L__main26
 NOP	
-SLTIU	R2, R4, 151
+SLTIU	R2, R6, 151
 L__main26:
 BEQ	R2, R0, L__main27
 NOP	
@@ -45,6 +50,8 @@ LW	R3, 4(R2)
 LW	R2, 0(R2)
 SW	R2, 0(R4)
 SW	R3, 4(R4)
+JAL	_ReadTime+0
+NOP	
 ORI	R25, R0, 1
 JAL	_GetDiffence_In_Pointers+0
 NOP	
@@ -76,9 +83,6 @@ NOP
 L_main7:
 ORI	R2, R0, 1
 SH	R2, Offset(ColorSamplingPic32mz_pg_cnt+0)(GP)
-LUI	R2, BitMask(LATB10_bit+0)
-ORI	R2, R2, BitMask(LATB10_bit+0)
-_SX	
 L_main5:
 J	L_main3
 NOP	
@@ -116,9 +120,6 @@ LW	R2, 0(R2)
 SW	R2, 0(R4)
 SW	R3, 4(R4)
 SH	R0, Offset(ColorSamplingPic32mz_pg_cnt+0)(GP)
-LUI	R2, BitMask(LATB10_bit+0)
-ORI	R2, R2, BitMask(LATB10_bit+0)
-_SX	
 L_main9:
 J	L_main3
 NOP	

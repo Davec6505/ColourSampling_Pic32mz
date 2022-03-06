@@ -6,9 +6,13 @@ void PerphialSetUp(){
     ANSELB = 0X0000;
     TRISB10_bit = 0;
     TRISB9_bit  = 0;
+    TRISD0_bit = 0;
     set_performance_mode();
+    SetRTCCInitial();
+    InitRTCC(0);
+    RTCC_ON();
+   // SetRTCC();
    // HID_Setp();
-
     HID_Enable(readbuff, writebuff);
     Unlock_IOLOCK();
     PPS_Mapping_NoLock(_RPB2, _OUTPUT, _U2TX);   // Sets pin PORTC.B2 to be Output and maps UART1 Transmit to it
@@ -18,7 +22,7 @@ void PerphialSetUp(){
     Lock_IOLOCK();
   //Ensure that B2CLK is used UEN<1:0>
     ISR_Init();
-    InitTimer1();
+    //InitTimer1();
     InitTimer2();
     
 
@@ -26,6 +30,7 @@ void PerphialSetUp(){
     UART_Init();
     Uart2InterruptSetup();
     Uart3InterruptSetup();
+
 
     MM_Init();
 }

@@ -152,16 +152,8 @@ extern char *SplitBuff[64];
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
-
-
-
-
-
-
-
-
-
-
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
+#line 13 "c:/users/git/coloursampling_pic32mz/rtcc.h"
 extern unsigned long time;
 extern unsigned long date;
 
@@ -172,11 +164,13 @@ extern unsigned long date;
 
 
 
-void IniyRTCC();
+void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
 void SetRTCC();
+void RTCC_ON();
+void ReadTime();
 #line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
@@ -204,7 +198,11 @@ void PerphialSetUp(){
  ANSELB = 0X0000;
  TRISB10_bit = 0;
  TRISB9_bit = 0;
+ TRISD0_bit = 0;
  set_performance_mode();
+ SetRTCCInitial();
+ InitRTCC(0);
+ RTCC_ON();
 
 
  HID_Enable(readbuff, writebuff);
@@ -216,7 +214,7 @@ void PerphialSetUp(){
  Lock_IOLOCK();
 
  ISR_Init();
- InitTimer1();
+
  InitTimer2();
 
 
@@ -224,6 +222,7 @@ void PerphialSetUp(){
  UART_Init();
  Uart2InterruptSetup();
  Uart3InterruptSetup();
+
 
  MM_Init();
 }
@@ -288,7 +287,7 @@ void set_performance_mode()
  PRECONbits.PFMSECEN = 0;
  PRECONbits.PREFEN = 0b11;
  PRECONbits.PFMWS = 0b010;
-#line 103 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
+#line 108 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
  SYSKEY = 0x33333333;
 
 }

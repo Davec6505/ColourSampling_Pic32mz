@@ -3,8 +3,10 @@
 
 //////////////////////////////////////////////////////////////
 //includes
-
-
+#include "UART.h"
+/////////////////////////////////////////////////////////////
+//defines
+#define RTCCDebug
 
 /////////////////////////////////////////////////////////////
 //consts and vars
@@ -18,11 +20,12 @@ extern unsigned long date;// set date to Friday 27 Oct 2006
 
 ////////////////////////////////////////////////////////////
 //function Prototypes
-void IniyRTCC();
+void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
 void SetRTCC();
-
+void RTCC_ON();
+void ReadTime();
 
 #endif

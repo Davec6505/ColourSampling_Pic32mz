@@ -114,16 +114,8 @@ extern char *SplitBuff[64];
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
-
-
-
-
-
-
-
-
-
-
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
+#line 13 "c:/users/git/coloursampling_pic32mz/rtcc.h"
 extern unsigned long time;
 extern unsigned long date;
 
@@ -134,11 +126,13 @@ extern unsigned long date;
 
 
 
-void IniyRTCC();
+void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
 void SetRTCC();
+void RTCC_ON();
+void ReadTime();
 #line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;

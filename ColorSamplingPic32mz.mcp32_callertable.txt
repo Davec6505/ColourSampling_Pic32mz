@@ -3,6 +3,9 @@ main
 	__FillZeros
 	PerphialSetUp
 		set_performance_mode
+		SetRTCCInitial
+		InitRTCC
+		RTCC_ON
 		HID_Enable
 			USB_Enable
 				DRV_USBHS_Initialize
@@ -16,7 +19,6 @@ main
 				Lock_IOLOCK
 		Lock_IOLOCK
 		ISR_Init
-		InitTimer1
 		InitTimer2
 		UART_Init
 		Uart2InterruptSetup
@@ -256,6 +258,16 @@ main
 		DRV_USBHS_DEVICE_IRPCancelAll
 		DRV_USBHS_DEVICE_TestModeEnter
 	GetTimer_Values
+	ReadTime
+		LongToStr
+			LongWordToStr
+		PrintOut
+			_doprntout
+				isdigit
+				scale
+				fround
+				PrintHandler
+					UART3_Write
 	GetDiffence_In_Pointers
 	HID_Read
 		DRV_USBHS_Tasks
@@ -291,15 +303,19 @@ main
 		I2C1_Stop
 			I2C1_Wait_For_Idle
 				I2C1_Is_Idle
+				PrintHandler
 		I2C3_Stop
 			I2C3_Wait_For_Idle
 				I2C3_Is_Idle
+				PrintHandler
 		I2C4_Stop
 			I2C4_Wait_For_Idle
 				I2C4_Is_Idle
+				PrintHandler
 		I2C5_Stop
 			I2C5_Wait_For_Idle
 				I2C5_Is_Idle
+				PrintHandler
 		_USB_DEVICE_HID_GlobalInitialize
 uart3_Tx_interrupt
 Timer1Interrupt

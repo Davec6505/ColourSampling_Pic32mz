@@ -41,9 +41,10 @@ static uint8_t cntr;
      switch(pg_cnt){
        case MAIN:  //main thread
             pgtime =  T0->millis - T0->last_millis ;
-            
+            LATB10_bit = LATD0_bit;
             if(pgtime > 150){
               T0->last_millis = T0->millis;
+              ReadTime();
               test = GetDiffence_In_Pointers(1);
               if(test != 0){
                  pg_cnt = 3;
@@ -56,7 +57,7 @@ static uint8_t cntr;
               }
                 
               pg_cnt = 1;
-              LATB10_bit = 1;
+              //LATB10_bit = 1;
             }
             break;
         case SECONDARY:  //Secondary thread for LCD etc
@@ -66,7 +67,7 @@ static uint8_t cntr;
             if(pgtime > 50){
               T0->last_millis = T0->millis;
               pg_cnt = 0;
-              LATB10_bit = 0;
+             // LATB10_bit = 0;
             }
             break;
        case USB:   //usb recieve thread 2mms max

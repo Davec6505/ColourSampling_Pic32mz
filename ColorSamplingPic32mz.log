@@ -11,11 +11,11 @@ diagnostics: 297	123	Compiled Successfully	__Lib_MemManager.c
 diagnostics: 0	122	Compilation Started	stdint.h
 hint: 28	1163	Variable 'i' has been declared, but not used	ColorSamplingPic32mz.c
 hint: 31	1163	Variable 'cntr' has been declared, but not used	ColorSamplingPic32mz.c
-diagnostics: 132	123	Compiled Successfully	ColorSamplingPic32mz.c
-warning: 90	1512	variable 'test' might not have been initialized	ColorSamplingPic32mz.c
+diagnostics: 133	123	Compiled Successfully	ColorSamplingPic32mz.c
+warning: 91	1512	variable 'test' might not have been initialized	ColorSamplingPic32mz.c
 hint: 27	1164	Variable 'Lastmillis' has been eliminated by optimizer	ColorSamplingPic32mz.c
 diagnostics: 0	122	Compilation Started	stdint.h
-diagnostics: 105	123	Compiled Successfully	Config.c
+diagnostics: 110	123	Compiled Successfully	Config.c
 diagnostics: 0	122	Compilation Started	stdint.h
 warning: 209	1505	Suspicious pointer conversion	USBdsc.c
 diagnostics: 209	123	Compiled Successfully	USBdsc.c
@@ -32,17 +32,25 @@ diagnostics: 0	122	Compilation Started	stdint.h
 hint: 0	1004	interrupt handler (Timer1Interrupt at 0x0004)	Timers.c
 hint: 0	1004	interrupt handler (Timer2Interrupt at 0x0009)	Timers.c
 diagnostics: 102	123	Compiled Successfully	Timers.c
-diagnostics: 0	122	Compilation Started	rtcc.h
+diagnostics: 0	122	Compilation Started	stdint.h
 hint: 0	1004	interrupt handler (RTCC_Interrupt at 0x00A6)	RTCC.c
-diagnostics: 112	123	Compiled Successfully	RTCC.c
-diagnostics: 0	127	All files Compiled in 515 ms	 
-hint: 0	1144	Used RX: 28 (88%)   Free RX: 4 (12%)	Used RX: 28 (88%)   Free RX: 4 (12%)
-hint: 0	1144	Static RAM (bytes): 2237   Dynamic RAM (bytes): 520045	Static RAM (bytes): 2237   Dynamic RAM (bytes): 520045
+hint: 131	1163	Variable 'hr10' has been declared, but not used	RTCC.c
+hint: 131	1163	Variable 'hr01' has been declared, but not used	RTCC.c
+hint: 131	1163	Variable 'min10' has been declared, but not used	RTCC.c
+hint: 131	1163	Variable 'min01' has been declared, but not used	RTCC.c
+hint: 131	1163	Variable 'sec10' has been declared, but not used	RTCC.c
+hint: 131	1163	Variable 'sec01' has been declared, but not used	RTCC.c
+diagnostics: 150	123	Compiled Successfully	RTCC.c
+hint: 134	1164	Variable 'secs' has been eliminated by optimizer	RTCC.c
+hint: 135	1164	Variable 'mins' has been eliminated by optimizer	RTCC.c
+diagnostics: 0	127	All files Compiled in 1078 ms	 
+hint: 0	1144	Used RX: 29 (91%)   Free RX: 3 (9%)	Used RX: 29 (91%)   Free RX: 3 (9%)
+hint: 0	1144	Static RAM (bytes): 2250   Dynamic RAM (bytes): 520033	Static RAM (bytes): 2250   Dynamic RAM (bytes): 520033
 hint: 0	1144	HEAP RAM (bytes): 2000	HEAP RAM (bytes): 2000
-hint: 0	1144	Used ROM (bytes): 49530 (5%)  Free ROM (bytes): 999046 (95%)	Used ROM (bytes): 49530 (5%)  Free ROM (bytes): 999046 (95%)
+hint: 0	1144	Used ROM (bytes): 60404 (6%)  Free ROM (bytes): 988172 (94%)	Used ROM (bytes): 60404 (6%)  Free ROM (bytes): 988172 (94%)
 hint: 0	1144	Used BOOTROM (bytes): 784 (1%)  Free BOOTROM (bytes): 146227 (99%)	Used BOOTROM (bytes): 784 (1%)  Free BOOTROM (bytes): 146227 (99%)
 diagnostics: 0	125	Project Linked Successfully	ColorSamplingPic32mz.mcp32
 hint: 1862	1004	Possible stack overflow: recursion or cross-calling detected.	__Lib_USB_MZ_HS.c
-diagnostics: 0	128	Linked in 641 ms	 
-diagnostics: 0	129	Project 'ColorSamplingPic32mz.mcp32' completed: 2609 ms	 
-diagnostics: 0	103	Finished successfully: 05 Mar 2022, 12:49:40	ColorSamplingPic32mz.mcp32
+diagnostics: 0	128	Linked in 1344 ms	 
+diagnostics: 0	129	Project 'ColorSamplingPic32mz.mcp32' completed: 4625 ms	 
+diagnostics: 0	103	Finished successfully: 06 Mar 2022, 09:25:26	ColorSamplingPic32mz.mcp32

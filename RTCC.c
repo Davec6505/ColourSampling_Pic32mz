@@ -2,25 +2,70 @@
 
 
 
-unsigned long time=0x04153300;// set time to 04 hr, 15 min, 33 sec
-unsigned long date=0x06102705;// set date to Friday 27 Oct 2006
+unsigned long time=0x00000000;// set time to 04 hr, 15 min, 33 sec
+unsigned long date=0x22030306;// set date to Friday 27 Oct 2006
 
 
 /*************************************************************
 /Initialize the RTCC module
 *************************************************************/
-void IniyRTCC(char osc_mod){
+void InitRTCC(char osc_mod){
     DI(); // Disable all interrupts
+
+
     SYSKEY = 0x00000000;
     SYSKEY = 0xAA996655;
     SYSKEY = 0x556699AA;
-
-    RTCCONSET = 0x8;
-    //RTCWREN_bit = 1;
-    //RTCCLKON_bit = 1;
-
+    if(osc_mod == 1){
+        if(!SOSCRDY_bit)
+           SOSCEN_bit = 1;
+        RTCCONSET = 0x489;    //SOSC,RTSECSEL,WREN
+    }
+    else {
+        if(SOSCRDY_bit)
+           SOSCEN_bit = 0;
+        RTCCONSET = 0x289;    //INTOSC,RTSECSEL,WREN
+    }
     // Lock Sequence
     SYSKEY = 0x33333333;
+}
+
+/*************************************************************
+* The following code example will update the RTCC time and date.
+*assume the secondary oscillator is enabled and ready,
+*i.e. OSCCON<1>=1, OSCCON<22>=1, and RTCC write is enabled
+*i.e. RTCWREN (RTCCON<3>) =1;
+***************************************************************/
+void SetRTCCInitial(){
+  do{
+    RTCCONbits.ON = 0;//RTCCONCLR=0x8000; // turn off the RTCC
+    Delay_ms(100);
+    LATB10_bit = 1;
+  }while(RTCCON&0x40); // wait for clock to be turned off 1=ON
+  RTCTIME=time; // safe to update the time
+  RTCDATE=date; // update the date
+
+}
+
+// can disable the RTCC write
+/* The following code example will update the RTCC time and date. */
+/*assume RTCC write is enabled i.e. RTCWREN (RTCCON<3>) =1; */
+void SetRTCC(){
+  DI(); // disable interrupts, critical section follows
+  while((RTCCON&0x4)!=0); // wait for not RTCSYNC
+  RTCTIME=time; // safe to update the time
+  RTCDATE=date; // update the date
+  EI(); // restore interrupts, critical section ended
+// can disable the RTCC write
+}
+
+
+void RTCC_ON(){
+  do{
+    RTCCONbits.ON = 1;//RTCCONSET=0x8000; // turn on the RTCC
+    Delay_ms(100);
+    LATB10_bit = 0;
+  }while((RTCCON&0x40)); // wait for clock to be turned on
 }
 
 /*************************************************************
@@ -69,35 +114,6 @@ unsigned int t0, t1;
   RTCCONSET=cal;
 }
 
-/*************************************************************
-* The following code example will update the RTCC time and date.
-*assume the secondary oscillator is enabled and ready, 
-*i.e. OSCCON<1>=1, OSCCON<22>=1, and RTCC write is enabled 
-*i.e. RTCWREN (RTCCON<3>) =1;
-***************************************************************/
-void SetRTCCInitial(){
-
-  RTCCONCLR=0x8000; // turn off the RTCC
-  while(RTCCON&0x40); // wait for clock to be turned off
-  RTCTIME=time; // safe to update the time
-  RTCDATE=date; // update the date
-  RTCCONSET=0x8000; // turn on the RTCC
-  while(!(RTCCON&0x40)); // wait for clock to be turned on
-
-}
-
-// can disable the RTCC write
-/* The following code example will update the RTCC time and date. */
-/*assume RTCC write is enabled i.e. RTCWREN (RTCCON<3>) =1; */
-void SetRTCC(){
-  DI(); // disable interrupts, critical section follows
-  while((RTCCON&0x4)!=0); // wait for not RTCSYNC
-  RTCTIME=time; // safe to update the time
-  RTCDATE=date; // update the date
-  EI(); // restore interrupts, critical section ended
-// can disable the RTCC write
-}
-
 
 /*
 The following code example demonstrates a simple interrupt service routine for RTCC
@@ -109,4 +125,26 @@ void RTCC_Interrupt() iv IVT_RTCC ilevel 7 ics ICS_SRS {
 // in response to the interrupt
   IFS1CLR=0x00008000; // be sure to clear RTCC interrupt flag
 // before exiting the service routine.
+}
+
+void ReadTime(){
+char hr10,hr01,min10,min01,sec10,sec01;
+char txt[15];
+unsigned long rtc;
+int secs = 0;
+int mins = 0;
+  if((RTCCON&0x4)!=0)
+      return;
+  else{ // wait for not RTCSYNC
+    rtc = RTCTIME; // safe to update the time
+    //date = RTCDATE; // update the date
+    LongToStr(rtc,txt);
+#ifdef RTCCDebug
+   PrintOut(PrintHandler,"\r\n"
+                         " * rtc  %s\r\n"
+                         ,txt);
+#endif
+   }
+   
+   
 }

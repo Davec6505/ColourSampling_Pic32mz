@@ -152,16 +152,8 @@ extern char *SplitBuff[64];
 void ArrClear(char** arr,int row);
 void SplitStr(char** arr,char* str,char a);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
-
-
-
-
-
-
-
-
-
-
+#line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
+#line 13 "c:/users/git/coloursampling_pic32mz/rtcc.h"
 extern unsigned long time;
 extern unsigned long date;
 
@@ -172,11 +164,13 @@ extern unsigned long date;
 
 
 
-void IniyRTCC();
+void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
 void SetRTCC();
+void RTCC_ON();
+void ReadTime();
 #line 17 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
@@ -235,9 +229,10 @@ static uint8_t cntr;
  switch(pg_cnt){
  case MAIN:
  pgtime = T0->millis - T0->last_millis ;
-
+ LATB10_bit = LATD0_bit;
  if(pgtime > 150){
  T0->last_millis = T0->millis;
+ ReadTime();
  test = GetDiffence_In_Pointers(1);
  if(test != 0){
  pg_cnt = 3;
@@ -250,7 +245,7 @@ static uint8_t cntr;
  }
 
  pg_cnt = 1;
- LATB10_bit = 1;
+
  }
  break;
  case SECONDARY:
@@ -260,7 +255,7 @@ static uint8_t cntr;
  if(pgtime > 50){
  T0->last_millis = T0->millis;
  pg_cnt = 0;
- LATB10_bit = 0;
+
  }
  break;
  case USB:
