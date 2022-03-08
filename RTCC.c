@@ -2,8 +2,8 @@
 
 
 
-unsigned long time=0x00000000;// set time to 04 hr, 15 min, 33 sec
-unsigned long date=0x22030306;// set date to Friday 27 Oct 2006
+unsigned long time=0x20260000;// set time to 04 hr, 15 min, 33 sec
+unsigned long date=0x22030600;// set date to Friday 27 Oct 2006
 
 
 /*************************************************************
@@ -12,19 +12,14 @@ unsigned long date=0x22030306;// set date to Friday 27 Oct 2006
 void InitRTCC(char osc_mod){
     DI(); // Disable all interrupts
 
-
     SYSKEY = 0x00000000;
     SYSKEY = 0xAA996655;
     SYSKEY = 0x556699AA;
     if(osc_mod == 1){
-        if(!SOSCRDY_bit)
-           SOSCEN_bit = 1;
-        RTCCONSET = 0x489;    //SOSC,RTSECSEL,WREN
+        RTCCONSET = 0x149;    //SOSC,RTSECSEL,WREN
     }
     else {
-        if(SOSCRDY_bit)
-           SOSCEN_bit = 0;
-        RTCCONSET = 0x289;    //INTOSC,RTSECSEL,WREN
+        RTCCONSET = 0x49;    //INTOSC,RTSECSEL,WREN
     }
     // Lock Sequence
     SYSKEY = 0x33333333;
@@ -37,14 +32,18 @@ void InitRTCC(char osc_mod){
 *i.e. RTCWREN (RTCCON<3>) =1;
 ***************************************************************/
 void SetRTCCInitial(){
-  do{
+ // do{
     RTCCONbits.ON = 0;//RTCCONCLR=0x8000; // turn off the RTCC
     Delay_ms(100);
-    LATB10_bit = 1;
-  }while(RTCCON&0x40); // wait for clock to be turned off 1=ON
+    //LATB10_bit = !LATB10_bit;
+ // }while(RTCCONbits.RTCCLKON);//&0x40); // wait for clock to be turned off 1=ON
   RTCTIME=time; // safe to update the time
   RTCDATE=date; // update the date
-
+ // do{
+    RTCCONbits.ON = 1;//RTCCONSET=0x8000; // turn on the RTCC
+    Delay_ms(100);
+ //   LATB10_bit = !LATB10_bit;
+ // }while((RTCCON&0x40)); // wait for clock to be turned on
 }
 
 // can disable the RTCC write
@@ -60,11 +59,10 @@ void SetRTCC(){
 }
 
 
-void RTCC_ON(){
+void RTCC_ON(RTCC_Values* set_time){
   do{
     RTCCONbits.ON = 1;//RTCCONSET=0x8000; // turn on the RTCC
     Delay_ms(100);
-    LATB10_bit = 0;
   }while((RTCCON&0x40)); // wait for clock to be turned on
 }
 
@@ -127,24 +125,36 @@ void RTCC_Interrupt() iv IVT_RTCC ilevel 7 ics ICS_SRS {
 // before exiting the service routine.
 }
 
-void ReadTime(){
-char hr10,hr01,min10,min01,sec10,sec01;
+void ReadTime(RTCC_Values* _time){
+char hr01,min01,sec01;
 char txt[15];
-unsigned long rtc;
-int secs = 0;
-int mins = 0;
+unsigned long rtc_time;
+unsigned long rtc_date;
+/*unsigned int secs = 0;
+unsigned int mins = 0;
+unsigned int hrs_ = 0;
+
+unsigned int yr = 0;
+unsigned int mth = 0;
+unsigned int day = 0;
+unsigned int wk = 0;*/
+
+  hr01=min01=sec01=0;
   if((RTCCON&0x4)!=0)
       return;
   else{ // wait for not RTCSYNC
-    rtc = RTCTIME; // safe to update the time
-    //date = RTCDATE; // update the date
-    LongToStr(rtc,txt);
-#ifdef RTCCDebug
-   PrintOut(PrintHandler,"\r\n"
-                         " * rtc  %s\r\n"
-                         ,txt);
-#endif
+    rtc_time = RTCTIME; // safe to update the time
+    rtc_date = RTCDATE; // update the date
+    
+    _time->secs = (rtc_time  & 0x7f00) >> 8;
+    _time->mins = (rtc_time  & 0x7f0000) >> 16;
+    _time->hrs  = (rtc_time  & 0x3f000000) >> 24;
+    _time->wk  = rtc_date    & 0x0f;
+    _time->day = (rtc_date   &  0x3f00) >> 8;
+    _time->mth = (rtc_date   & 0x1f0000)>> 16;
+    _time->yr  = (rtc_date   & 0xff000000)>> 24;
+
    }
    
-   
 }
+

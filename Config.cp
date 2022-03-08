@@ -59,7 +59,7 @@ typedef unsigned long wchar_t;
 #line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
-#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
+#line 16 "c:/users/git/coloursampling_pic32mz/timers.h"
 typedef struct {
 unsigned long long millis;
 unsigned long long last_millis;
@@ -70,22 +70,6 @@ char hr;
 }Timers;
 
 
-typedef struct{
-char yr10;
-char yr01;
-char mn10;
-char mn01;
-char dy10;
-char dy01;
-char wk;
-
-char hr10;
-char hr01;
-char min10;
-char min01;
-char sec10;
-char sec01;
-}RTCC;
 
 
 
@@ -150,7 +134,7 @@ extern char *SplitBuff[64];
 
 
 void ArrClear(char** arr,int row);
-void SplitStr(char** arr,char* str,char a);
+void SplitStr(char arr[][64],char* str,int chars,...);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 13 "c:/users/git/coloursampling_pic32mz/rtcc.h"
@@ -158,6 +142,18 @@ extern unsigned long time;
 extern unsigned long date;
 
 
+
+typedef struct{
+unsigned int yr;
+unsigned int mth;
+unsigned int day;
+unsigned int wk;
+
+unsigned int hrs;
+unsigned int mins;
+unsigned int secs;
+
+}RTCC_Values;
 
 
 
@@ -168,10 +164,10 @@ void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
-void SetRTCC();
+void SetRTCC(RTCC_Values* set_time);
 void RTCC_ON();
-void ReadTime();
-#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
+void ReadTime(RTCC_Values* _time);
+#line 21 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -192,6 +188,7 @@ UART};
  void HID_Setp();
  void set_performance_mode();
  void OutPuts(char arr[][64],char* str,char type);
+ void TimeOutputs();
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
 void PerphialSetUp(){
 
@@ -200,9 +197,11 @@ void PerphialSetUp(){
  TRISB9_bit = 0;
  TRISD0_bit = 0;
  set_performance_mode();
+
+ InitRTCC(1);
  SetRTCCInitial();
- InitRTCC(0);
- RTCC_ON();
+
+
 
 
  HID_Enable(readbuff, writebuff);
@@ -287,7 +286,7 @@ void set_performance_mode()
  PRECONbits.PFMSECEN = 0;
  PRECONbits.PREFEN = 0b11;
  PRECONbits.PFMWS = 0b010;
-#line 108 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
+#line 110 "C:/Users/Git/ColourSampling_Pic32mz/Config.c"
  SYSKEY = 0x33333333;
 
 }

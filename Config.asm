@@ -16,12 +16,10 @@ ORI	R2, R2, BitMask(TRISD0_bit+0)
 _SX	
 JAL	_set_performance_mode+0
 NOP	
-JAL	_SetRTCCInitial+0
-NOP	
-MOVZ	R25, R0, R0
+ORI	R25, R0, 1
 JAL	_InitRTCC+0
 NOP	
-JAL	_RTCC_ON+0
+JAL	_SetRTCCInitial+0
 NOP	
 LUI	R26, hi_addr(_writebuff+0)
 ORI	R26, R26, lo_addr(_writebuff+0)

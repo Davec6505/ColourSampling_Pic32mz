@@ -24,7 +24,7 @@ extern char *SplitBuff[64];
 //////////////////////////////////////////////////////////
 //function prototyes
 void ArrClear(char** arr,int row);
-void SplitStr(char** arr,char* str,char a);
+void SplitStr(char arr[][64],char* str,int chars,...);
 
 
 

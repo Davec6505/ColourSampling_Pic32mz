@@ -59,7 +59,7 @@ typedef unsigned long wchar_t;
 #line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
-#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
+#line 16 "c:/users/git/coloursampling_pic32mz/timers.h"
 typedef struct {
 unsigned long long millis;
 unsigned long long last_millis;
@@ -70,22 +70,6 @@ char hr;
 }Timers;
 
 
-typedef struct{
-char yr10;
-char yr01;
-char mn10;
-char mn01;
-char dy10;
-char dy01;
-char wk;
-
-char hr10;
-char hr01;
-char min10;
-char min01;
-char sec10;
-char sec01;
-}RTCC;
 
 
 
@@ -150,7 +134,7 @@ extern char *SplitBuff[64];
 
 
 void ArrClear(char** arr,int row);
-void SplitStr(char** arr,char* str,char a);
+void SplitStr(char arr[][64],char* str,int chars,...);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/uart.h"
 #line 13 "c:/users/git/coloursampling_pic32mz/rtcc.h"
@@ -158,6 +142,18 @@ extern unsigned long time;
 extern unsigned long date;
 
 
+
+typedef struct{
+unsigned int yr;
+unsigned int mth;
+unsigned int day;
+unsigned int wk;
+
+unsigned int hrs;
+unsigned int mins;
+unsigned int secs;
+
+}RTCC_Values;
 
 
 
@@ -168,10 +164,10 @@ void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
-void SetRTCC();
+void SetRTCC(RTCC_Values* set_time);
 void RTCC_ON();
-void ReadTime();
-#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
+void ReadTime(RTCC_Values* _time);
+#line 21 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -192,9 +188,12 @@ UART};
  void HID_Setp();
  void set_performance_mode();
  void OutPuts(char arr[][64],char* str,char type);
+ void TimeOutputs();
 #line 4 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 const char newline[] = {'\r','\n','\0'};
 Timers *T0;
+RTCC_Values rtc_vals;
+RTCC_Values rtc_set_vals;
 
 uint16_t tmr;
 uint16_t tmr_;
@@ -209,7 +208,7 @@ char uart2_rd;
 char uart3_rd;
 char txtA[20];
 char *txtPtr;
-#line 25 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+#line 27 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
 void main() {
 long long pgtime = 0;
 long long Lastmillis = 0;
@@ -217,9 +216,12 @@ int test,i;
 char str[200];
 char spltstr[20][64];
 static uint8_t cntr;
+static bit time_once;
+
  PerphialSetUp();
  EI();
  pg_cnt = 0;
+
  while(1){
 
  USB_Polling_Proc();
@@ -229,33 +231,39 @@ static uint8_t cntr;
  switch(pg_cnt){
  case MAIN:
  pgtime = T0->millis - T0->last_millis ;
- LATB10_bit = LATD0_bit;
- if(pgtime > 150){
- T0->last_millis = T0->millis;
- ReadTime();
- test = GetDiffence_In_Pointers(1);
- if(test != 0){
- pg_cnt = 3;
- break;
- }
+
+
  kk = HID_Read();
  if(kk != 0){
- pg_cnt = 2;
+ pg_cnt = USB;
  break;
  }
 
- pg_cnt = 1;
 
+ test = GetDiffence_In_Pointers(1);
+ if(test != 0){
+ pg_cnt = UART;
+ break;
+ }
+
+
+ if(pgtime > 150){
+ T0->last_millis = T0->millis;
+ LATB9_bit = 1;
+ pg_cnt = 1;
  }
  break;
  case SECONDARY:
  pgtime = T0->millis - T0->last_millis ;
 
 
+ TimeOutputs();
+
+
  if(pgtime > 50){
  T0->last_millis = T0->millis;
- pg_cnt = 0;
-
+ LATB9_bit = 0;
+ pg_cnt = MAIN;
  }
  break;
  case USB:
@@ -263,9 +271,10 @@ static uint8_t cntr;
 
  if (kk != 0)
  {
- strcpy(str,readbuff);
- SplitStr(spltstr,str,',');
- OutPuts(spltstr,str,0);
+ ArrClear(spltstr,6);
+ strncpy(str,readbuff,64);
+ SplitStr(spltstr,str,2,',','#');
+ OutPuts(spltstr,str+0,0);
  pg_cnt = 0;
  break;
  }
@@ -303,7 +312,6 @@ int i;
  memset(writebuff,0,64);
  switch(type){
  case 0:
-
  strncpy(writebuff,arr[0],strlen(arr[0]));
  strcat(writebuff,"\r\n");
  for(i = 1; i < rows+1;i++){
@@ -318,4 +326,18 @@ int i;
  break;
  }
  HID_Write(writebuff, 64);
+}
+
+void TimeOutputs(){
+static bit time_once;
+static int cnt_to_print = 0;
+char txt_[6];
+ LATB10_bit = RTCCONbits.HALFSEC;
+ if(!time_once && RTCCONbits.HALFSEC){
+ time_once = 1;
+ ReadTime(&rtc_vals);
+#line 168 "C:/Users/Git/ColourSampling_Pic32mz/ColorSamplingPic32mz.c"
+ }else if(time_once && !RTCCONbits.HALFSEC)
+ time_once = 0;
+
 }

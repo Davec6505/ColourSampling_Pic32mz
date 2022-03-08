@@ -156,34 +156,12 @@ ADDIU	R2, R2, 1
 SH	R2, Offset(Timers_T0+16)(GP)
 ANDI	R2, R2, 65535
 SLTIU	R2, R2, 1000
-BEQ	R2, R0, L_Timers_TMR_Timer11
+BEQ	R2, R0, L_Timers_TMR_Timer8
 NOP	
 J	L_Timers_TMR_Timer0
 NOP	
-L_Timers_TMR_Timer11:
+L_Timers_TMR_Timer8:
 SH	R0, Offset(Timers_T0+16)(GP)
-LBU	R2, Offset(Timers_T0+18)(GP)
-ADDIU	R4, R2, 1
-SB	R4, Offset(Timers_T0+18)(GP)
-_LX	
-EXT	R2, R2, BitPos(LATB9_bit+0), 1
-XORI	R3, R2, 1
-_LX	
-INS	R2, R3, BitPos(LATB9_bit+0), 1
-_SX	
-ANDI	R2, R4, 255
-SLTIU	R2, R2, 60
-BEQ	R2, R0, L_Timers_TMR_Timer12
-NOP	
-J	L_Timers_TMR_Timer1
-NOP	
-L_Timers_TMR_Timer12:
-SB	R0, Offset(Timers_T0+18)(GP)
-LBU	R2, Offset(Timers_T0+19)(GP)
-ADDIU	R2, R2, 1
-SB	R2, Offset(Timers_T0+19)(GP)
-L_Timers_TMR_Timer2:
-L_Timers_TMR_Timer1:
 L_Timers_TMR_Timer0:
 L_end_TMR_Timer:
 JR	RA

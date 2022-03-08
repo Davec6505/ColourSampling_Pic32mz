@@ -8,10 +8,12 @@ void PerphialSetUp(){
     TRISB9_bit  = 0;
     TRISD0_bit = 0;
     set_performance_mode();
+
+    InitRTCC(1);
     SetRTCCInitial();
-    InitRTCC(0);
-    RTCC_ON();
+   // RTCC_ON();
    // SetRTCC();
+   
    // HID_Setp();
     HID_Enable(readbuff, writebuff);
     Unlock_IOLOCK();

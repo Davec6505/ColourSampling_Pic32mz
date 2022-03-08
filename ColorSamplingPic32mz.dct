@@ -18748,6 +18748,8 @@ datatwen_usbe5csr1_bit
 datatwen_usbe6csr1_bit
 datatwen_usbe7csr1_bit
 date
+day
+day
 day01
 day01
 day01
@@ -29612,6 +29614,8 @@ hr102_bit
 hr103
 hr103_alrmtime_bit
 hr103_bit
+hrs
+hrs
 hsen
 hsen
 hsen_bit
@@ -35064,6 +35068,8 @@ min102_bit
 min103
 min103_alrmtime_bit
 min103_bit
+mins
+mins
 mm_error_
 mm_freememtable
 mm_init
@@ -35797,6 +35803,8 @@ msten_bit
 msten_spi2con_bit
 msten_spi3con_bit
 msten_spi4con_bit
+mth
+mth
 mult
 mult
 mult
@@ -43675,6 +43683,8 @@ rswrstinv
 rswrstinvbits
 rswrstset
 rswrstsetbits
+rtc_set_vals
+rtc_vals
 rtcalrm
 rtcalrmbits
 rtcalrmclr
@@ -51173,6 +51183,8 @@ sec102_bit
 sec103
 sec103_alrmtime_bit
 sec103_bit
+secs
+secs
 seed
 seed
 seed0
@@ -57333,6 +57345,7 @@ thsbt2_bit
 thsbt3
 thsbt3_bit
 time
+timeoutputs
 tmr
 tmr_
 tmr_sys
@@ -74532,6 +74545,8 @@ windis_ubadevcfg1_bit
 winopn
 winopn
 winopn_bit
+wk
+wk
 wkien0
 wkien0
 wkien0_bit
@@ -74727,3 +74742,5 @@ year102
 year102_bit
 year103
 year103_bit
+yr
+yr

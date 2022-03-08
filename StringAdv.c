@@ -17,24 +17,35 @@ void ArrClear(char arr[][64],int row){
 /*******************************************************
 *Split String into multi array
 *******************************************************/
-void SplitStr(char arr[][64],char* str,char a){
-int i,j,k;  i=j=k=0;
+void SplitStr(char arr[][64],char* str,int chars,...){//char a){
+ va_list args;
+int i,j,k,l;
+char c[10];
 
-   for(i=0;i<strlen(str);i++){
+   va_start(args,chars);
+   for(i=0;i<chars;i++)
+       c[i] = va_arg(args,char);
+       
+   for(i=0,j=0,k=0;i<strlen(str);i++){
      arr[j][k] = str[i];
-     if(str[i] == a){
-         arr[j][k] = 0;
-         j++;
-         k=0;
-         continue;
+     for(l = 0; l < chars; l++){
+       if(str[i] == c[l]){
+           arr[j][k] = 0;
+           j++;
+           k=0;
+           break;
+       }
      }
+     if(l < chars)
+        continue;
      k++;
      if(str[i] == 0 || str[i] > 127 || str[i] < 32)
         break;
    }
    arr[j][k] = 0;
+
 #ifdef StrDebug
-   PrintOut(PrintHandler,"\r\n"
+  PrintOut(PrintHandler,"\r\n"
                          " * arr[0]   %s\r\n"
                          " * arr[1]   %s\r\n"
                          " * arr[2]   %s\r\n"

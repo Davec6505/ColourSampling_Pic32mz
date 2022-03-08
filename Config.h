@@ -11,6 +11,10 @@
 #include "StringAdv.h"
 #include "RTCC.h"
 
+////////////////////////////////////////////////////////////
+//defines
+//#define timeDebug
+
 
 ////////////////////////////////////////////////////////////
 //variables
@@ -34,4 +38,5 @@ UART};
  void HID_Setp();
  void set_performance_mode();
  void OutPuts(char arr[][64],char* str,char type);
+ void TimeOutputs();
 #endif

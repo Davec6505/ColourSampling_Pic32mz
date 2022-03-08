@@ -1,4 +1,4 @@
-0	1	mikroCPIC32.exe -MSF -DBG -pP32MZ1024EFH064 -HEAP 2000 -RA -LHF -C -DL -SSA -EBASE 0x9FC01000 -INTDEF MV_SRS7_IS32 -O11110005 -fo200 -N"C:\Users\Git\ColourSampling_Pic32mz\ColorSamplingPic32mz.mcp32" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Uses\" -SP"C:\Users\Git\ColourSampling_Pic32mz\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Uses\" -IP"C:\Users\Git\ColourSampling_Pic32mz\" "ColorSamplingPic32mz.c" "Config.c" "USBdsc.c" "StringAdv.c" "UART.c" "Timers.c" "RTCC.c" "__Lib_CP0.emcl" "__Lib_Math.emcl" "__Lib_MathDouble_MZ_EF.emcl" "__Lib_System_MZ_EF.emcl" "__Lib_SoftResetDma.emcl" "__Lib_Delays.emcl" "__Lib_CType.emcl" "__Lib_CString.emcl" "__Lib_CStdlib_EF.emcl" "__Lib_MemManager.emcl" "__Lib_Conversions_EF.emcl" "__Lib_Sprintf_EF.emcl" "__Lib_PrintOut_EF.emcl" "__Lib_FLASH_MZ.emcl" "__Lib_I2C_1345_MZ.emcl" "__Lib_UART_123456_MZ.emcl" "__Lib_PPS_P32MZ_64CAN.emcl" "__Lib_USB_MZ_HS.emcl"	 
+0	1	mikroCPIC32.exe -MSF -DBG -pP32MZ1024EFH064 -HEAP 2000 -RA -LHF -C -Y -DL -SSA -EBASE 0x9FC01000 -INTDEF MV_SRS7_IS32 -O11110004 -fo200 -N"C:\Users\Git\ColourSampling_Pic32mz\ColorSamplingPic32mz.mcp32" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Uses\" -SP"C:\Users\Git\ColourSampling_Pic32mz\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC32\Uses\" -IP"C:\Users\Git\ColourSampling_Pic32mz\" "ColorSamplingPic32mz.c" "Config.c" "USBdsc.c" "StringAdv.c" "UART.c" "Timers.c" "RTCC.c" "__Lib_CP0.emcl" "__Lib_Math.emcl" "__Lib_MathDouble_MZ_EF.emcl" "__Lib_System_MZ_EF.emcl" "__Lib_SoftResetDma.emcl" "__Lib_Delays.emcl" "__Lib_CType.emcl" "__Lib_CString.emcl" "__Lib_CStdlib_EF.emcl" "__Lib_MemManager.emcl" "__Lib_Conversions_EF.emcl" "__Lib_Sprintf_EF.emcl" "__Lib_PrintOut_EF.emcl" "__Lib_FLASH_MZ.emcl" "__Lib_I2C_1345_MZ.emcl" "__Lib_UART_123456_MZ.emcl" "__Lib_PPS_P32MZ_64CAN.emcl" "__Lib_USB_MZ_HS.emcl"	 
 diagnostics: 0	122	Compilation Started	P32MZ1024EFH064.c
 diagnostics: 60456	123	Compiled Successfully	P32MZ1024EFH064.c
 diagnostics: 0	122	Compilation Started	__Lib_Delays.c
@@ -9,18 +9,20 @@ warning: 155	1506	Implicit conversion of pointer to int	__Lib_MemManager.c
 warning: 174	1508	Implicit conversion of int to ptr	__Lib_MemManager.c
 diagnostics: 297	123	Compiled Successfully	__Lib_MemManager.c
 diagnostics: 0	122	Compilation Started	stdint.h
-hint: 28	1163	Variable 'i' has been declared, but not used	ColorSamplingPic32mz.c
-hint: 31	1163	Variable 'cntr' has been declared, but not used	ColorSamplingPic32mz.c
-diagnostics: 133	123	Compiled Successfully	ColorSamplingPic32mz.c
-warning: 91	1512	variable 'test' might not have been initialized	ColorSamplingPic32mz.c
-hint: 27	1164	Variable 'Lastmillis' has been eliminated by optimizer	ColorSamplingPic32mz.c
+hint: 30	1163	Variable 'i' has been declared, but not used	ColorSamplingPic32mz.c
+hint: 33	1163	Variable 'cntr' has been declared, but not used	ColorSamplingPic32mz.c
+hint: 34	1163	Variable 'time_once' has been declared, but not used	ColorSamplingPic32mz.c
+hint: 149	1163	Variable 'txt_' has been declared, but not used	ColorSamplingPic32mz.c
+diagnostics: 171	123	Compiled Successfully	ColorSamplingPic32mz.c
+warning: 103	1512	variable 'test' might not have been initialized	ColorSamplingPic32mz.c
+hint: 29	1164	Variable 'Lastmillis' has been eliminated by optimizer	ColorSamplingPic32mz.c
 diagnostics: 0	122	Compilation Started	stdint.h
-diagnostics: 110	123	Compiled Successfully	Config.c
+diagnostics: 112	123	Compiled Successfully	Config.c
 diagnostics: 0	122	Compilation Started	stdint.h
 warning: 209	1505	Suspicious pointer conversion	USBdsc.c
 diagnostics: 209	123	Compiled Successfully	USBdsc.c
 diagnostics: 0	122	Compilation Started	stdarg.h
-diagnostics: 46	123	Compiled Successfully	StringAdv.c
+diagnostics: 57	123	Compiled Successfully	StringAdv.c
 diagnostics: 0	122	Compilation Started	stdint.h
 hint: 0	1004	interrupt handler (USBInterrupt at 0x0084)	UART.c
 hint: 0	1004	interrupt handler (USBDMAInterrupt at 0x0085)	UART.c
@@ -31,26 +33,22 @@ diagnostics: 177	123	Compiled Successfully	UART.c
 diagnostics: 0	122	Compilation Started	stdint.h
 hint: 0	1004	interrupt handler (Timer1Interrupt at 0x0004)	Timers.c
 hint: 0	1004	interrupt handler (Timer2Interrupt at 0x0009)	Timers.c
-diagnostics: 102	123	Compiled Successfully	Timers.c
+diagnostics: 89	123	Compiled Successfully	Timers.c
 diagnostics: 0	122	Compilation Started	stdint.h
 hint: 0	1004	interrupt handler (RTCC_Interrupt at 0x00A6)	RTCC.c
-hint: 131	1163	Variable 'hr10' has been declared, but not used	RTCC.c
-hint: 131	1163	Variable 'hr01' has been declared, but not used	RTCC.c
-hint: 131	1163	Variable 'min10' has been declared, but not used	RTCC.c
-hint: 131	1163	Variable 'min01' has been declared, but not used	RTCC.c
-hint: 131	1163	Variable 'sec10' has been declared, but not used	RTCC.c
-hint: 131	1163	Variable 'sec01' has been declared, but not used	RTCC.c
-diagnostics: 150	123	Compiled Successfully	RTCC.c
-hint: 134	1164	Variable 'secs' has been eliminated by optimizer	RTCC.c
-hint: 135	1164	Variable 'mins' has been eliminated by optimizer	RTCC.c
-diagnostics: 0	127	All files Compiled in 1078 ms	 
-hint: 0	1144	Used RX: 29 (91%)   Free RX: 3 (9%)	Used RX: 29 (91%)   Free RX: 3 (9%)
-hint: 0	1144	Static RAM (bytes): 2250   Dynamic RAM (bytes): 520033	Static RAM (bytes): 2250   Dynamic RAM (bytes): 520033
+hint: 130	1163	Variable 'txt' has been declared, but not used	RTCC.c
+diagnostics: 159	123	Compiled Successfully	RTCC.c
+hint: 129	1164	Variable 'hr01' has been eliminated by optimizer	RTCC.c
+hint: 129	1164	Variable 'min01' has been eliminated by optimizer	RTCC.c
+hint: 129	1164	Variable 'sec01' has been eliminated by optimizer	RTCC.c
+diagnostics: 0	127	All files Compiled in 765 ms	 
+hint: 0	1144	Used RX: 28 (88%)   Free RX: 4 (12%)	Used RX: 28 (88%)   Free RX: 4 (12%)
+hint: 0	1144	Static RAM (bytes): 2256   Dynamic RAM (bytes): 520029	Static RAM (bytes): 2256   Dynamic RAM (bytes): 520029
 hint: 0	1144	HEAP RAM (bytes): 2000	HEAP RAM (bytes): 2000
-hint: 0	1144	Used ROM (bytes): 60404 (6%)  Free ROM (bytes): 988172 (94%)	Used ROM (bytes): 60404 (6%)  Free ROM (bytes): 988172 (94%)
+hint: 0	1144	Used ROM (bytes): 50410 (5%)  Free ROM (bytes): 998166 (95%)	Used ROM (bytes): 50410 (5%)  Free ROM (bytes): 998166 (95%)
 hint: 0	1144	Used BOOTROM (bytes): 784 (1%)  Free BOOTROM (bytes): 146227 (99%)	Used BOOTROM (bytes): 784 (1%)  Free BOOTROM (bytes): 146227 (99%)
 diagnostics: 0	125	Project Linked Successfully	ColorSamplingPic32mz.mcp32
 hint: 1862	1004	Possible stack overflow: recursion or cross-calling detected.	__Lib_USB_MZ_HS.c
-diagnostics: 0	128	Linked in 1344 ms	 
-diagnostics: 0	129	Project 'ColorSamplingPic32mz.mcp32' completed: 4625 ms	 
-diagnostics: 0	103	Finished successfully: 06 Mar 2022, 09:25:26	ColorSamplingPic32mz.mcp32
+diagnostics: 0	128	Linked in 938 ms	 
+diagnostics: 0	129	Project 'ColorSamplingPic32mz.mcp32' completed: 3875 ms	 
+diagnostics: 0	103	Finished successfully: 08 Mar 2022, 23:03:08	ColorSamplingPic32mz.mcp32

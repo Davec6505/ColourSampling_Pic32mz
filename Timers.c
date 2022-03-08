@@ -80,19 +80,6 @@ static void TMR_Timer(){
    T0.ms++;
    if(T0.ms > 999){
      T0.ms = 0;
-     T0.sec++;
-     LATB9_bit = !LATB9_bit;
-     if(T0.sec > 59){
-       T0.sec = 0;
-       T0.min++;
-       if(T0.sec > 59){
-         T0.min = 0;
-         T0.hr++;
-         if(T0.hr > 23){
-           T0.hr = 0;
-         }
-       }
-     }
    }
 }
 
@@ -100,3 +87,5 @@ static void TMR_Timer(){
 Timers* GetTimer_Values(){
    return &T0;
 }
+
+

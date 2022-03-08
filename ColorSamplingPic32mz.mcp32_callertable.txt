@@ -1,11 +1,8 @@
 main
-	__CC2DW
-	__FillZeros
 	PerphialSetUp
 		set_performance_mode
-		SetRTCCInitial
 		InitRTCC
-		RTCC_ON
+		SetRTCCInitial
 		HID_Enable
 			USB_Enable
 				DRV_USBHS_Initialize
@@ -258,24 +255,17 @@ main
 		DRV_USBHS_DEVICE_IRPCancelAll
 		DRV_USBHS_DEVICE_TestModeEnter
 	GetTimer_Values
-	ReadTime
-		LongToStr
-			LongWordToStr
-		PrintOut
-			_doprntout
-				isdigit
-				scale
-				fround
-				PrintHandler
-					UART3_Write
-	GetDiffence_In_Pointers
 	HID_Read
 		DRV_USBHS_Tasks
 		USB_DEVICE_Tasks
 		USB_DEVICE_Open
 		USB_DEVICE_EventHandlerSet
 		USB_DEVICE_HID_ReportReceive
-	strcpy
+	GetDiffence_In_Pointers
+	TimeOutputs
+		ReadTime
+	ArrClear
+	strncpy
 	SplitStr
 		strlen
 	OutPuts
@@ -303,20 +293,18 @@ main
 		I2C1_Stop
 			I2C1_Wait_For_Idle
 				I2C1_Is_Idle
-				PrintHandler
 		I2C3_Stop
 			I2C3_Wait_For_Idle
 				I2C3_Is_Idle
-				PrintHandler
 		I2C4_Stop
 			I2C4_Wait_For_Idle
 				I2C4_Is_Idle
-				PrintHandler
 		I2C5_Stop
 			I2C5_Wait_For_Idle
 				I2C5_Is_Idle
-				PrintHandler
 		_USB_DEVICE_HID_GlobalInitialize
+	__CC2DW
+	__FillZeros
 uart3_Tx_interrupt
 Timer1Interrupt
 Timer2Interrupt

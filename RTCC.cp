@@ -61,7 +61,7 @@ typedef unsigned long wchar_t;
 #line 1 "c:/users/git/coloursampling_pic32mz/timers.h"
 #line 1 "c:/users/git/coloursampling_pic32mz/config.h"
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
-#line 20 "c:/users/git/coloursampling_pic32mz/timers.h"
+#line 16 "c:/users/git/coloursampling_pic32mz/timers.h"
 typedef struct {
 unsigned long long millis;
 unsigned long long last_millis;
@@ -72,22 +72,6 @@ char hr;
 }Timers;
 
 
-typedef struct{
-char yr10;
-char yr01;
-char mn10;
-char mn01;
-char dy10;
-char dy01;
-char wk;
-
-char hr10;
-char hr01;
-char min10;
-char min01;
-char sec10;
-char sec01;
-}RTCC;
 
 
 
@@ -117,9 +101,9 @@ extern char *SplitBuff[64];
 
 
 void ArrClear(char** arr,int row);
-void SplitStr(char** arr,char* str,char a);
+void SplitStr(char arr[][64],char* str,int chars,...);
 #line 1 "c:/users/git/coloursampling_pic32mz/rtcc.h"
-#line 17 "c:/users/git/coloursampling_pic32mz/config.h"
+#line 21 "c:/users/git/coloursampling_pic32mz/config.h"
 extern uint16_t tmr;
 extern uint16_t tmr_;
 
@@ -140,6 +124,7 @@ UART};
  void HID_Setp();
  void set_performance_mode();
  void OutPuts(char arr[][64],char* str,char type);
+ void TimeOutputs();
 #line 1 "c:/users/public/documents/mikroelektronika/mikroc pro for pic32/include/stdint.h"
 #line 13 "c:/users/git/coloursampling_pic32mz/uart.h"
 extern char readbuff[64];
@@ -180,6 +165,18 @@ extern unsigned long date;
 
 
 
+typedef struct{
+unsigned int yr;
+unsigned int mth;
+unsigned int day;
+unsigned int wk;
+
+unsigned int hrs;
+unsigned int mins;
+unsigned int secs;
+
+}RTCC_Values;
+
 
 
 
@@ -189,42 +186,41 @@ void InitRTCC(char osc_mod);
 void InitRTCC_Tnterrupt();
 void RTCC_Calibrate();
 void SetRTCCInitial();
-void SetRTCC();
+void SetRTCC(RTCC_Values* set_time);
 void RTCC_ON();
-void ReadTime();
+void ReadTime(RTCC_Values* _time);
 #line 5 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
-unsigned long time=0x00000000;
-unsigned long date=0x22030306;
+unsigned long time=0x20260000;
+unsigned long date=0x22030600;
 #line 12 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
 void InitRTCC(char osc_mod){
  DI();
-
 
  SYSKEY = 0x00000000;
  SYSKEY = 0xAA996655;
  SYSKEY = 0x556699AA;
  if(osc_mod == 1){
- if(!SOSCRDY_bit)
- SOSCEN_bit = 1;
- RTCCONSET = 0x489;
+ RTCCONSET = 0x149;
  }
  else {
- if(SOSCRDY_bit)
- SOSCEN_bit = 0;
- RTCCONSET = 0x289;
+ RTCCONSET = 0x49;
  }
 
  SYSKEY = 0x33333333;
 }
-#line 39 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
+#line 34 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
 void SetRTCCInitial(){
- do{
+
  RTCCONbits.ON = 0;
  Delay_ms(100);
- LATB10_bit = 1;
- }while(RTCCON&0x40);
+
+
  RTCTIME=time;
  RTCDATE=date;
+
+ RTCCONbits.ON = 1;
+ Delay_ms(100);
+
 
 }
 
@@ -241,14 +237,13 @@ void SetRTCC(){
 }
 
 
-void RTCC_ON(){
+void RTCC_ON(RTCC_Values* set_time){
  do{
  RTCCONbits.ON = 1;
  Delay_ms(100);
- LATB10_bit = 0;
  }while((RTCCON&0x40));
 }
-#line 77 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
+#line 75 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
 void InitRTCC_Tnterrupt(){
 
  IEC1CLR=0x00008000;
@@ -267,7 +262,7 @@ void InitRTCC_Tnterrupt(){
  RTCCONSET=0x8000;
  while(!(RTCCON&0x40));
 }
-#line 99 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
+#line 97 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
 void RTCC_Calibrate(){
 
 int cal=0x3FD;
@@ -285,7 +280,7 @@ unsigned int t0, t1;
  RTCCONCLR=0x03FF0000;
  RTCCONSET=cal;
 }
-#line 123 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
+#line 121 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
 void RTCC_Interrupt() iv IVT_RTCC ilevel 7 ics ICS_SRS {
 
 
@@ -293,24 +288,27 @@ void RTCC_Interrupt() iv IVT_RTCC ilevel 7 ics ICS_SRS {
 
 }
 
-void ReadTime(){
-char hr10,hr01,min10,min01,sec10,sec01;
+void ReadTime(RTCC_Values* _time){
+char hr01,min01,sec01;
 char txt[15];
-unsigned long rtc;
-int secs = 0;
-int mins = 0;
+unsigned long rtc_time;
+unsigned long rtc_date;
+#line 142 "C:/Users/Git/ColourSampling_Pic32mz/RTCC.c"
+ hr01=min01=sec01=0;
  if((RTCCON&0x4)!=0)
  return;
  else{
- rtc = RTCTIME;
+ rtc_time = RTCTIME;
+ rtc_date = RTCDATE;
 
- LongToStr(rtc,txt);
-
- PrintOut(PrintHandler,"\r\n"
- " * rtc  %s\r\n"
- ,txt);
+ _time->secs = (rtc_time & 0x7f00) >> 8;
+ _time->mins = (rtc_time & 0x7f0000) >> 16;
+ _time->hrs = (rtc_time & 0x3f000000) >> 24;
+ _time->wk = rtc_date & 0x0f;
+ _time->day = (rtc_date & 0x3f00) >> 8;
+ _time->mth = (rtc_date & 0x1f0000)>> 16;
+ _time->yr = (rtc_date & 0xff000000)>> 24;
 
  }
-
 
 }

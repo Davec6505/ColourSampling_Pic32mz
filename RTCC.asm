@@ -9,41 +9,19 @@ ORI	R2, R2, 39338
 SW	R2, Offset(SYSKEY+0)(GP)
 ANDI	R3, R25, 255
 ORI	R2, R0, 1
-BEQ	R3, R2, L__InitRTCC30
+BEQ	R3, R2, L__InitRTCC27
 NOP	
 J	L_InitRTCC0
 NOP	
-L__InitRTCC30:
-_LX	
-EXT	R2, R2, BitPos(SOSCRDY_bit+0), 1
-BEQ	R2, R0, L__InitRTCC31
-NOP	
+L__InitRTCC27:
+ORI	R2, R0, 329
+SW	R2, Offset(RTCCONSET+0)(GP)
 J	L_InitRTCC1
 NOP	
-L__InitRTCC31:
-LUI	R2, BitMask(SOSCEN_bit+0)
-ORI	R2, R2, BitMask(SOSCEN_bit+0)
-_SX	
-L_InitRTCC1:
-ORI	R2, R0, 1161
-SW	R2, Offset(RTCCONSET+0)(GP)
-J	L_InitRTCC2
-NOP	
 L_InitRTCC0:
-_LX	
-EXT	R2, R2, BitPos(SOSCRDY_bit+0), 1
-BNE	R2, R0, L__InitRTCC33
-NOP	
-J	L_InitRTCC3
-NOP	
-L__InitRTCC33:
-LUI	R2, BitMask(SOSCEN_bit+0)
-ORI	R2, R2, BitMask(SOSCEN_bit+0)
-_SX	
-L_InitRTCC3:
-ORI	R2, R0, 649
+ORI	R2, R0, 73
 SW	R2, Offset(RTCCONSET+0)(GP)
-L_InitRTCC2:
+L_InitRTCC1:
 LUI	R2, 13107
 ORI	R2, R2, 13107
 SW	R2, Offset(SYSKEY+0)(GP)
@@ -52,46 +30,43 @@ JR	RA
 NOP	
 ; end of _InitRTCC
 _SetRTCCInitial:
-L_SetRTCCInitial4:
 ORI	R2, R0, 32768
 SW	R2, Offset(RTCCONbits+4)(GP)
 LUI	R24, 101
 ORI	R24, R24, 47530
-L_SetRTCCInitial7:
+L_SetRTCCInitial2:
 ADDIU	R24, R24, -1
-BNE	R24, R0, L_SetRTCCInitial7
+BNE	R24, R0, L_SetRTCCInitial2
 NOP	
-LUI	R2, BitMask(LATB10_bit+0)
-ORI	R2, R2, BitMask(LATB10_bit+0)
-_SX	
-LW	R2, Offset(RTCCON+0)(GP)
-ANDI	R2, R2, 64
-BEQ	R2, R0, L__SetRTCCInitial35
-NOP	
-J	L_SetRTCCInitial4
-NOP	
-L__SetRTCCInitial35:
 LW	R2, Offset(_time+0)(GP)
 SW	R2, Offset(RTCTIME+0)(GP)
 LW	R2, Offset(_date+0)(GP)
 SW	R2, Offset(RTCDATE+0)(GP)
+ORI	R2, R0, 32768
+SW	R2, Offset(RTCCONbits+8)(GP)
+LUI	R24, 101
+ORI	R24, R24, 47530
+L_SetRTCCInitial4:
+ADDIU	R24, R24, -1
+BNE	R24, R0, L_SetRTCCInitial4
+NOP	
 L_end_SetRTCCInitial:
 JR	RA
 NOP	
 ; end of _SetRTCCInitial
 _SetRTCC:
 DI	R30
-L_SetRTCC9:
+L_SetRTCC6:
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 4
-BNE	R2, R0, L__SetRTCC38
+BNE	R2, R0, L__SetRTCC31
 NOP	
-J	L_SetRTCC10
+J	L_SetRTCC7
 NOP	
-L__SetRTCC38:
-J	L_SetRTCC9
+L__SetRTCC31:
+J	L_SetRTCC6
 NOP	
-L_SetRTCC10:
+L_SetRTCC7:
 LW	R2, Offset(_time+0)(GP)
 SW	R2, Offset(RTCTIME+0)(GP)
 LW	R2, Offset(_date+0)(GP)
@@ -102,25 +77,22 @@ JR	RA
 NOP	
 ; end of _SetRTCC
 _RTCC_ON:
-L_RTCC_ON11:
+L_RTCC_ON8:
 ORI	R2, R0, 32768
 SW	R2, Offset(RTCCONbits+8)(GP)
 LUI	R24, 101
 ORI	R24, R24, 47530
-L_RTCC_ON14:
+L_RTCC_ON11:
 ADDIU	R24, R24, -1
-BNE	R24, R0, L_RTCC_ON14
+BNE	R24, R0, L_RTCC_ON11
 NOP	
-LUI	R2, BitMask(LATB10_bit+0)
-ORI	R2, R2, BitMask(LATB10_bit+0)
-_SX	
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 64
-BEQ	R2, R0, L__RTCC_ON40
+BEQ	R2, R0, L__RTCC_ON33
 NOP	
-J	L_RTCC_ON11
+J	L_RTCC_ON8
 NOP	
-L__RTCC_ON40:
+L__RTCC_ON33:
 L_end_RTCC_ON:
 JR	RA
 NOP	
@@ -130,17 +102,17 @@ ORI	R2, R0, 32768
 SW	R2, Offset(IEC1CLR+0)(GP)
 ORI	R2, R0, 32768
 SW	R2, Offset(RTCCONCLR+0)(GP)
-L_InitRTCC_Tnterrupt16:
+L_InitRTCC_Tnterrupt13:
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 64
-BNE	R2, R0, L__InitRTCC_Tnterrupt43
+BNE	R2, R0, L__InitRTCC_Tnterrupt36
 NOP	
-J	L_InitRTCC_Tnterrupt17
+J	L_InitRTCC_Tnterrupt14
 NOP	
-L__InitRTCC_Tnterrupt43:
-J	L_InitRTCC_Tnterrupt16
+L__InitRTCC_Tnterrupt36:
+J	L_InitRTCC_Tnterrupt13
 NOP	
-L_InitRTCC_Tnterrupt17:
+L_InitRTCC_Tnterrupt14:
 ORI	R2, R0, 32768
 SW	R2, Offset(IFS1CLR+0)(GP)
 LUI	R2, 7936
@@ -167,17 +139,17 @@ ORI	R2, R0, 34304
 SW	R2, Offset(RTCALRMSET+0)(GP)
 ORI	R2, R0, 32768
 SW	R2, Offset(RTCCONSET+0)(GP)
-L_InitRTCC_Tnterrupt18:
+L_InitRTCC_Tnterrupt15:
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 64
-BEQ	R2, R0, L__InitRTCC_Tnterrupt44
+BEQ	R2, R0, L__InitRTCC_Tnterrupt37
 NOP	
-J	L_InitRTCC_Tnterrupt19
+J	L_InitRTCC_Tnterrupt16
 NOP	
-L__InitRTCC_Tnterrupt44:
-J	L_InitRTCC_Tnterrupt18
+L__InitRTCC_Tnterrupt37:
+J	L_InitRTCC_Tnterrupt15
 NOP	
-L_InitRTCC_Tnterrupt19:
+L_InitRTCC_Tnterrupt16:
 L_end_InitRTCC_Tnterrupt:
 JR	RA
 NOP	
@@ -188,45 +160,45 @@ ORI	R30, R0, 1021
 SH	R30, 0(SP)
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 32768
-BNE	R2, R0, L__RTCC_Calibrate47
+BNE	R2, R0, L__RTCC_Calibrate40
 NOP	
-J	L_RTCC_Calibrate20
+J	L_RTCC_Calibrate17
 NOP	
-L__RTCC_Calibrate47:
-L_RTCC_Calibrate21:
+L__RTCC_Calibrate40:
+L_RTCC_Calibrate18:
 ; t0 start address is: 16 (R4)
 LW	R4, Offset(RTCTIME+0)(GP)
 ; t1 start address is: 20 (R5)
 LW	R5, Offset(RTCTIME+0)(GP)
 ANDI	R3, R4, 65535
 ANDI	R2, R5, 65535
-BEQ	R3, R2, L__RTCC_Calibrate48
+BEQ	R3, R2, L__RTCC_Calibrate41
 NOP	
-J	L_RTCC_Calibrate21
+J	L_RTCC_Calibrate18
 NOP	
-L__RTCC_Calibrate48:
+L__RTCC_Calibrate41:
 ; t1 end address is: 20 (R5)
 ANDI	R2, R4, 255
 ; t0 end address is: 16 (R4)
 ANDI	R2, R2, 65535
-BEQ	R2, R0, L__RTCC_Calibrate49
+BEQ	R2, R0, L__RTCC_Calibrate42
 NOP	
-J	L_RTCC_Calibrate24
+J	L_RTCC_Calibrate21
 NOP	
-L__RTCC_Calibrate49:
-L_RTCC_Calibrate25:
+L__RTCC_Calibrate42:
+L_RTCC_Calibrate22:
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 2
-BEQ	R2, R0, L__RTCC_Calibrate50
+BEQ	R2, R0, L__RTCC_Calibrate43
 NOP	
-J	L_RTCC_Calibrate26
+J	L_RTCC_Calibrate23
 NOP	
-L__RTCC_Calibrate50:
-J	L_RTCC_Calibrate25
+L__RTCC_Calibrate43:
+J	L_RTCC_Calibrate22
 NOP	
-L_RTCC_Calibrate26:
-L_RTCC_Calibrate24:
-L_RTCC_Calibrate20:
+L_RTCC_Calibrate23:
+L_RTCC_Calibrate21:
+L_RTCC_Calibrate17:
 LUI	R2, 1023
 SW	R2, Offset(RTCCONCLR+0)(GP)
 LH	R2, 0(SP)
@@ -264,45 +236,53 @@ WRPGPR	SP, SP
 ERET	
 ; end of _RTCC_Interrupt
 _ReadTime:
-ADDIU	SP, SP, -28
-SW	RA, 0(SP)
-SW	R25, 4(SP)
-SW	R26, 8(SP)
 LW	R2, Offset(RTCCON+0)(GP)
 ANDI	R2, R2, 4
-BNE	R2, R0, L__ReadTime54
+BNE	R2, R0, L__ReadTime47
 NOP	
-J	L_ReadTime27
+J	L_ReadTime24
 NOP	
-L__ReadTime54:
+L__ReadTime47:
 J	L_end_ReadTime
 NOP	
-L_ReadTime27:
-; rtc start address is: 12 (R3)
-LW	R3, Offset(RTCTIME+0)(GP)
-ADDIU	R2, SP, 12
-MOVZ	R26, R2, R0
-MOVZ	R25, R3, R0
-; rtc end address is: 12 (R3)
-JAL	_LongToStr+0
-NOP	
-ADDIU	R2, SP, 12
-ADDIU	SP, SP, -12
-SW	R2, 8(SP)
-LUI	R2, hi_addr(?lstr_1_RTCC+0)
-ORI	R2, R2, lo_addr(?lstr_1_RTCC+0)
-SW	R2, 4(SP)
-LUI	R2, hi_addr(_PrintHandler+0)
-ORI	R2, R2, lo_addr(_PrintHandler+0)
-SW	R2, 0(SP)
-JAL	_PrintOut+0
-NOP	
-ADDIU	SP, SP, 12
+L_ReadTime24:
+; rtc_time start address is: 16 (R4)
+LW	R4, Offset(RTCTIME+0)(GP)
+; rtc_date start address is: 20 (R5)
+LW	R5, Offset(RTCDATE+0)(GP)
+ADDIU	R3, R25, 12
+ANDI	R2, R4, 32512
+SRL	R2, R2, 8
+SH	R2, 0(R3)
+ADDIU	R3, R25, 10
+LUI	R2, 127
+AND	R2, R4, R2
+SRL	R2, R2, 16
+SH	R2, 0(R3)
+ADDIU	R3, R25, 8
+LUI	R2, 16128
+AND	R2, R4, R2
+; rtc_time end address is: 16 (R4)
+SRL	R2, R2, 24
+SH	R2, 0(R3)
+ADDIU	R3, R25, 6
+ANDI	R2, R5, 15
+SH	R2, 0(R3)
+ADDIU	R3, R25, 4
+ANDI	R2, R5, 16128
+SRL	R2, R2, 8
+SH	R2, 0(R3)
+ADDIU	R3, R25, 2
+LUI	R2, 31
+AND	R2, R5, R2
+SRL	R2, R2, 16
+SH	R2, 0(R3)
+LUI	R2, 65280
+AND	R2, R5, R2
+; rtc_date end address is: 20 (R5)
+SRL	R2, R2, 24
+SH	R2, 0(R25)
 L_end_ReadTime:
-LW	R26, 8(SP)
-LW	R25, 4(SP)
-LW	RA, 0(SP)
-ADDIU	SP, SP, 28
 JR	RA
 NOP	
 ; end of _ReadTime
